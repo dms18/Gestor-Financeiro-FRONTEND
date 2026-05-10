@@ -1,7 +1,8 @@
 {
-  "name": "photo-gallery-ng-capacitor",
-  "version": "2.0.0",
-  "author": "Ionic Framework",
+  "name": "Gestor-finaceiro",
+  "license": "MIT",
+  "version": "1.0.0.0",
+  "author": "Diego Marques",
   "homepage": "https://ionicframework.com/docs/angular/your-first-app",
   "scripts": {
     "ng": "ng",
@@ -57,5 +58,5 @@
     "tslint": "~6.1.0",
     "typescript": "^4.2.4"
   },
-  "description": "Build a photo gallery app that runs on iOS, Android, and the web - with just one codebase"
+  "description": "Gestor Finaceiro para MEIs"
 }
