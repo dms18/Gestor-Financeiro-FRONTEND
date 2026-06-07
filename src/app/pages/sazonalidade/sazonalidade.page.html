@@ -1,0 +1,108 @@
+<ion-header [translucent]="true">
+  <ion-toolbar color="primary">
+    <ion-title>Sazonalidade</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  <ion-refresher slot="fixed" (ionRefresh)="carregarPeriodos($event)">
+    <ion-refresher-content></ion-refresher-content>
+  </ion-refresher>
+
+  <div *ngIf="!carregando && periodos.length === 0" class="ion-padding ion-text-center empty-state">
+    <ion-icon name="calendar-outline"></ion-icon>
+    <p>Nenhum período sazonal cadastrado.</p>
+    <ion-button fill="clear" (click)="abrirModalNovo()">Adicionar primeiro período</ion-button>
+  </div>
+
+  <ion-card *ngFor="let p of periodos" [class.ativo]="estaAtivo(p)">
+    <ion-card-header>
+      <div class="card-top">
+        <ion-card-title>{{ p.nome }}</ion-card-title>
+        <ion-badge *ngIf="estaAtivo(p)" color="success">Ativo agora</ion-badge>
+      </div>
+      <ion-card-subtitle>
+        {{ nomeMes(p.mesInicio) }} → {{ nomeMes(p.mesFim) }}
+      </ion-card-subtitle>
+    </ion-card-header>
+
+    <ion-card-content>
+      <p *ngIf="p.descricao">{{ p.descricao }}</p>
+      <ion-chip [color]="corImpacto(p.nivelImpacto)" outline="true">
+        <ion-icon name="trending-up"></ion-icon>
+        <ion-label>Impacto {{ p.nivelImpacto }}</ion-label>
+      </ion-chip>
+
+      <div class="acoes">
+        <ion-button fill="clear" size="small" (click)="abrirModalEditar(p)">
+          <ion-icon slot="start" name="create-outline"></ion-icon>
+          Editar
+        </ion-button>
+        <ion-button fill="clear" size="small" color="danger" (click)="confirmarExclusao(p)">
+          <ion-icon slot="start" name="trash-outline"></ion-icon>
+          Excluir
+        </ion-button>
+      </div>
+    </ion-card-content>
+  </ion-card>
+
+  <ion-fab vertical="bottom" horizontal="end" slot="fixed">
+    <ion-fab-button color="primary" (click)="abrirModalNovo()">
+      <ion-icon name="add"></ion-icon>
+    </ion-fab-button>
+  </ion-fab>
+
+  <div class="form-overlay" *ngIf="modalAberto">
+    <div class="form-painel">
+      <ion-toolbar color="primary">
+        <ion-title>{{ editandoId ? 'Editar' : 'Novo' }} Período</ion-title>
+        <ion-buttons slot="end">
+          <ion-button (click)="fecharModal()">Fechar</ion-button>
+        </ion-buttons>
+      </ion-toolbar>
+
+      <div class="form-conteudo">
+        <form [formGroup]="sazonalidadeForm">
+          <ion-list>
+            <ion-item>
+              <ion-label position="stacked">Nome *</ion-label>
+              <ion-input formControlName="nome" placeholder="Ex: Temporada de Verão"></ion-input>
+            </ion-item>
+
+            <ion-item>
+              <ion-label position="stacked">Mês de início *</ion-label>
+              <ion-select formControlName="mesInicio" interface="alert">
+                <ion-select-option *ngFor="let m of meses" [value]="m.valor">{{ m.nome }}</ion-select-option>
+              </ion-select>
+            </ion-item>
+
+            <ion-item>
+              <ion-label position="stacked">Mês de fim *</ion-label>
+              <ion-select formControlName="mesFim" interface="alert">
+                <ion-select-option *ngFor="let m of meses" [value]="m.valor">{{ m.nome }}</ion-select-option>
+              </ion-select>
+            </ion-item>
+
+            <ion-item>
+              <ion-label position="stacked">Nível de impacto *</ion-label>
+              <ion-select formControlName="nivelImpacto" interface="alert">
+                <ion-select-option value="BAIXO">Baixo</ion-select-option>
+                <ion-select-option value="MEDIO">Médio</ion-select-option>
+                <ion-select-option value="ALTO">Alto</ion-select-option>
+              </ion-select>
+            </ion-item>
+
+            <ion-item>
+              <ion-label position="stacked">Descrição</ion-label>
+              <ion-textarea formControlName="descricao" rows="3" placeholder="Detalhes do período"></ion-textarea>
+            </ion-item>
+          </ion-list>
+
+          <ion-button expand="block" class="ion-margin-top" (click)="salvar()" [disabled]="sazonalidadeForm.invalid">
+            Salvar
+          </ion-button>
+        </form>
+      </div>
+    </div>
+  </div>
+</ion-content>

@@ -1,0 +1,128 @@
+<ion-header [translucent]="true">
+  <ion-toolbar color="primary">
+    <ion-title>Transações</ion-title>
+  </ion-toolbar>
+  <ion-toolbar color="primary">
+    <ion-segment [(ngModel)]="filtroTipoPessoa" (ionChange)="onFiltroChange()">
+      <ion-segment-button value="">
+        <ion-label>Todas</ion-label>
+      </ion-segment-button>
+      <ion-segment-button value="PF">
+        <ion-label>PF</ion-label>
+      </ion-segment-button>
+      <ion-segment-button value="PJ">
+        <ion-label>PJ</ion-label>
+      </ion-segment-button>
+    </ion-segment>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  <ion-refresher slot="fixed" (ionRefresh)="carregarTransacoes($event)">
+    <ion-refresher-content></ion-refresher-content>
+  </ion-refresher>
+
+  <div *ngIf="!carregando && transacoes.length === 0" class="ion-padding ion-text-center empty-state">
+    <ion-icon name="receipt-outline"></ion-icon>
+    <p>Nenhuma transação cadastrada.</p>
+    <ion-button fill="clear" (click)="abrirModalNova()">Adicionar primeira transação</ion-button>
+  </div>
+
+  <ion-list>
+    <ion-item-sliding *ngFor="let t of transacoes">
+      <ion-item button (click)="abrirModalEditar(t)">
+        <ion-icon
+          slot="start"
+          [name]="t.tipo === 'RECEITA' ? 'arrow-up-circle' : 'arrow-down-circle'"
+          [color]="t.tipo === 'RECEITA' ? 'success' : 'danger'"
+        ></ion-icon>
+        <ion-label>
+          <h2>{{ t.descricao }}</h2>
+          <p>{{ nomeCategoria(t.categoriaId) }} • {{ nomeConta(t.contaId) }}</p>
+          <p>{{ t.data | date:'dd/MM/yyyy' }} • {{ t.tipoPessoa }}</p>
+        </ion-label>
+        <ion-text slot="end" [color]="t.tipo === 'RECEITA' ? 'success' : 'danger'">
+          <strong>{{ t.tipo === 'RECEITA' ? '+' : '-' }} {{ t.valor | currency:'BRL':'symbol':'1.2-2' }}</strong>
+        </ion-text>
+      </ion-item>
+
+      <ion-item-options side="end">
+        <ion-item-option color="danger" (click)="confirmarExclusao(t)">
+          <ion-icon slot="icon-only" name="trash"></ion-icon>
+        </ion-item-option>
+      </ion-item-options>
+    </ion-item-sliding>
+  </ion-list>
+
+  <ion-fab vertical="bottom" horizontal="end" slot="fixed">
+    <ion-fab-button color="primary" (click)="abrirModalNova()">
+      <ion-icon name="add"></ion-icon>
+    </ion-fab-button>
+  </ion-fab>
+
+  <div class="form-overlay" *ngIf="modalAberto">
+    <div class="form-painel">
+      <ion-toolbar color="primary">
+        <ion-title>{{ editandoId ? 'Editar' : 'Nova' }} Transação</ion-title>
+        <ion-buttons slot="end">
+          <ion-button (click)="fecharModal()">Fechar</ion-button>
+        </ion-buttons>
+      </ion-toolbar>
+
+      <div class="form-conteudo">
+        <form [formGroup]="transacaoForm">
+          <ion-list>
+            <ion-item>
+              <ion-label position="stacked">Descrição *</ion-label>
+              <ion-input formControlName="descricao" placeholder="Ex: Venda de produtos"></ion-input>
+            </ion-item>
+
+            <ion-item>
+              <ion-label position="stacked">Valor *</ion-label>
+              <ion-input type="number" formControlName="valor" placeholder="0,00"></ion-input>
+            </ion-item>
+
+            <ion-item>
+              <ion-label position="stacked">Data *</ion-label>
+              <ion-datetime formControlName="data" displayFormat="DD/MM/YYYY"></ion-datetime>
+            </ion-item>
+
+            <ion-item>
+              <ion-label position="stacked">Tipo *</ion-label>
+              <ion-select formControlName="tipo" interface="alert">
+                <ion-select-option value="RECEITA">Receita</ion-select-option>
+                <ion-select-option value="DESPESA">Despesa</ion-select-option>
+              </ion-select>
+            </ion-item>
+
+            <ion-item>
+              <ion-label position="stacked">Pessoa *</ion-label>
+              <ion-select formControlName="tipoPessoa" interface="alert">
+                <ion-select-option value="PF">Pessoa Física</ion-select-option>
+                <ion-select-option value="PJ">Pessoa Jurídica</ion-select-option>
+              </ion-select>
+            </ion-item>
+
+            <ion-item>
+              <ion-label position="stacked">Categoria</ion-label>
+              <ion-select formControlName="categoriaId" interface="alert" placeholder="Selecione">
+                <ion-select-option *ngFor="let c of categorias" [value]="c.id">{{ c.nome }}</ion-select-option>
+              </ion-select>
+            </ion-item>
+
+            <ion-item>
+              <ion-label position="stacked">Conta</ion-label>
+              <ion-select formControlName="contaId" interface="alert" placeholder="Selecione">
+                <ion-select-option *ngFor="let conta of contas" [value]="conta.id">{{ conta.nome }}</ion-select-option>
+              </ion-select>
+            </ion-item>
+          </ion-list>
+
+          <ion-button expand="block" class="ion-margin-top" (click)="salvar()" [disabled]="transacaoForm.invalid">
+            Salvar
+          </ion-button>
+        </form>
+      </div>
+    </div>
+  </div>
+</ion-content>

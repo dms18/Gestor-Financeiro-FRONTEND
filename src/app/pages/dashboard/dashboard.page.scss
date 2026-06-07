@@ -1,0 +1,97 @@
+.saudacao {
+  font-size: 16px;
+  font-weight: 500;
+  margin: 0 0 4px;
+}
+
+.cards-resumo {
+  .card-saldo {
+    margin: 4px 0;
+    background: var(--ion-color-primary);
+    color: #fff;
+
+    ion-card-content {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .rotulo {
+      font-size: 13px;
+      opacity: 0.85;
+    }
+
+    .valor {
+      font-size: 28px;
+      font-weight: 700;
+
+      &.negativo {
+        color: #ffd2d2;
+      }
+    }
+  }
+
+  .cards-linha {
+    display: flex;
+    gap: 8px;
+
+    .card-mini {
+      flex: 1;
+      margin: 4px 0;
+
+      ion-card-content {
+        display: flex;
+        flex-direction: column;
+      }
+
+      ion-icon {
+        font-size: 24px;
+        margin-bottom: 4px;
+      }
+
+      .rotulo {
+        font-size: 12px;
+        color: var(--ion-color-medium);
+      }
+
+      .valor {
+        font-size: 17px;
+        font-weight: 600;
+      }
+
+      &.receitas ion-icon { color: var(--ion-color-success); }
+      &.despesas ion-icon { color: var(--ion-color-danger); }
+    }
+  }
+}
+
+.barra-grafico {
+  margin-bottom: 14px;
+
+  .barra-label {
+    display: flex;
+    justify-content: space-between;
+    font-size: 13px;
+    margin-bottom: 4px;
+  }
+
+  .barra-fundo {
+    height: 12px;
+    border-radius: 6px;
+    background: var(--ion-color-light-shade);
+    overflow: hidden;
+  }
+
+  .barra-preenchida {
+    height: 100%;
+    border-radius: 6px;
+    transition: width 0.4s ease;
+
+    &.receita { background: var(--ion-color-success); }
+    &.despesa { background: var(--ion-color-danger); }
+  }
+}
+
+ion-card-title ion-icon {
+  vertical-align: middle;
+  margin-right: 4px;
+}

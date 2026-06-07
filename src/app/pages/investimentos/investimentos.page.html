@@ -1,0 +1,125 @@
+<ion-header [translucent]="true">
+  <ion-toolbar color="primary">
+    <ion-title>Investimentos</ion-title>
+  </ion-toolbar>
+  <ion-toolbar color="primary">
+    <ion-segment [(ngModel)]="filtroStatus" scrollable="true">
+      <ion-segment-button *ngFor="let s of statusList" [value]="s.valor">
+        <ion-label>{{ s.label }}</ion-label>
+      </ion-segment-button>
+    </ion-segment>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  <ion-refresher slot="fixed" (ionRefresh)="carregarInvestimentos($event)">
+    <ion-refresher-content></ion-refresher-content>
+  </ion-refresher>
+
+  <div *ngIf="!carregando && filtrados.length === 0" class="ion-padding ion-text-center empty-state">
+    <ion-icon name="bulb-outline"></ion-icon>
+    <p>Nenhum investimento nesta categoria.</p>
+    <ion-button fill="clear" (click)="abrirModalNovo()">Adicionar ideia</ion-button>
+  </div>
+
+  <ion-card *ngFor="let inv of filtrados">
+    <ion-card-header>
+      <div class="card-top">
+        <ion-card-title>{{ inv.titulo }}</ion-card-title>
+        <ion-badge [color]="corPrioridade(inv.prioridade)">{{ inv.prioridade }}</ion-badge>
+      </div>
+    </ion-card-header>
+
+    <ion-card-content>
+      <p *ngIf="inv.descricao">{{ inv.descricao }}</p>
+
+      <div class="metricas">
+        <div class="metrica" *ngIf="inv.valorEstimado != null">
+          <span class="rotulo">Valor estimado</span>
+          <span class="valor">{{ inv.valorEstimado | currency:'BRL':'symbol':'1.2-2' }}</span>
+        </div>
+        <div class="metrica" *ngIf="inv.retornoEstimado != null">
+          <span class="rotulo">Retorno estimado</span>
+          <span class="valor retorno">{{ inv.retornoEstimado }}%</span>
+        </div>
+      </div>
+
+      <div class="acoes">
+        <ion-button fill="clear" size="small" (click)="abrirModalEditar(inv)">
+          <ion-icon slot="start" name="create-outline"></ion-icon>
+          Editar
+        </ion-button>
+        <ion-button fill="clear" size="small" color="danger" (click)="confirmarExclusao(inv)">
+          <ion-icon slot="start" name="trash-outline"></ion-icon>
+          Excluir
+        </ion-button>
+      </div>
+    </ion-card-content>
+  </ion-card>
+
+  <ion-fab vertical="bottom" horizontal="end" slot="fixed">
+    <ion-fab-button color="primary" (click)="abrirModalNovo()">
+      <ion-icon name="add"></ion-icon>
+    </ion-fab-button>
+  </ion-fab>
+
+  <div class="form-overlay" *ngIf="modalAberto">
+    <div class="form-painel">
+      <ion-toolbar color="primary">
+        <ion-title>{{ editandoId ? 'Editar' : 'Novo' }} Investimento</ion-title>
+        <ion-buttons slot="end">
+          <ion-button (click)="fecharModal()">Fechar</ion-button>
+        </ion-buttons>
+      </ion-toolbar>
+
+      <div class="form-conteudo">
+        <form [formGroup]="investimentoForm">
+          <ion-list>
+            <ion-item>
+              <ion-label position="stacked">Título *</ion-label>
+              <ion-input formControlName="titulo" placeholder="Ex: Compra de equipamento"></ion-input>
+            </ion-item>
+
+            <ion-item>
+              <ion-label position="stacked">Descrição</ion-label>
+              <ion-textarea formControlName="descricao" rows="3" placeholder="Detalhes do investimento"></ion-textarea>
+            </ion-item>
+
+            <ion-item>
+              <ion-label position="stacked">Valor estimado (R$)</ion-label>
+              <ion-input type="number" formControlName="valorEstimado" placeholder="0,00"></ion-input>
+            </ion-item>
+
+            <ion-item>
+              <ion-label position="stacked">Retorno estimado (%)</ion-label>
+              <ion-input type="number" formControlName="retornoEstimado" placeholder="0"></ion-input>
+            </ion-item>
+
+            <ion-item>
+              <ion-label position="stacked">Status *</ion-label>
+              <ion-select formControlName="status" interface="alert">
+                <ion-select-option value="IDEIA">Ideia</ion-select-option>
+                <ion-select-option value="EM_ANALISE">Em Análise</ion-select-option>
+                <ion-select-option value="APROVADO">Aprovado</ion-select-option>
+                <ion-select-option value="DESCARTADO">Descartado</ion-select-option>
+              </ion-select>
+            </ion-item>
+
+            <ion-item>
+              <ion-label position="stacked">Prioridade *</ion-label>
+              <ion-select formControlName="prioridade" interface="alert">
+                <ion-select-option value="BAIXA">Baixa</ion-select-option>
+                <ion-select-option value="MEDIA">Média</ion-select-option>
+                <ion-select-option value="ALTA">Alta</ion-select-option>
+              </ion-select>
+            </ion-item>
+          </ion-list>
+
+          <ion-button expand="block" class="ion-margin-top" (click)="salvar()" [disabled]="investimentoForm.invalid">
+            Salvar
+          </ion-button>
+        </form>
+      </div>
+    </div>
+  </div>
+</ion-content>

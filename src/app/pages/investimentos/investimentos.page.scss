@@ -1,0 +1,45 @@
+.empty-state {
+  margin-top: 30%;
+  color: var(--ion-color-medium);
+
+  ion-icon {
+    font-size: 64px;
+    margin-bottom: 12px;
+  }
+}
+
+.card-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.metricas {
+  display: flex;
+  gap: 24px;
+  margin: 12px 0;
+}
+
+.metrica {
+  display: flex;
+  flex-direction: column;
+
+  .rotulo {
+    font-size: 11px;
+    color: var(--ion-color-medium);
+  }
+
+  .valor {
+    font-size: 16px;
+    font-weight: 600;
+
+    &.retorno {
+      color: var(--ion-color-success);
+    }
+  }
+}
+
+.acoes {
+  display: flex;
+  justify-content: flex-end;
+}

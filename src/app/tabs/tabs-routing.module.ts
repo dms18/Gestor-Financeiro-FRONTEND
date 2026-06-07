@@ -4,49 +4,69 @@ import { TabsPage } from './tabs.page';
 
 const routes: Routes = [
   {
-    path: 'tabs',
+    path: '',
     component: TabsPage,
     children: [
       {
-        path: 'tab1',
+        path: 'dashboard',
         children: [
           {
             path: '',
             loadChildren: () =>
-              import('../tab1/tab1.module').then(m => m.Tab1PageModule)
+              import('../pages/dashboard/dashboard.module').then(m => m.DashboardPageModule)
           }
         ]
       },
       {
-        path: 'tab2',
+        path: 'transacoes',
         children: [
           {
             path: '',
             loadChildren: () =>
-              import('../tab2/tab2.module').then(m => m.Tab2PageModule)
+              import('../pages/transacoes/transacoes.module').then(m => m.TransacoesPageModule)
           }
         ]
       },
       {
-        path: 'tab3',
+        path: 'sazonalidade',
         children: [
           {
             path: '',
             loadChildren: () =>
-              import('../tab3/tab3.module').then(m => m.Tab3PageModule)
+              import('../pages/sazonalidade/sazonalidade.module').then(m => m.SazonalidadePageModule)
+          }
+        ]
+      },
+      {
+        path: 'investimentos',
+        children: [
+          {
+            path: '',
+            loadChildren: () =>
+              import('../pages/investimentos/investimentos.module').then(m => m.InvestimentosPageModule)
+          }
+        ]
+      },
+      {
+        path: 'perfil',
+        children: [
+          {
+            path: '',
+            loadChildren: () =>
+              import('../pages/perfil/perfil.module').then(m => m.PerfilPageModule)
           }
         ]
       },
       {
         path: '',
-        redirectTo: '/tabs/tab1',
+        redirectTo: '/tabs/dashboard',
         pathMatch: 'full'
       }
     ]
   },
   {
     path: '',
-    redirectTo: '/tabs/tab1',
+    redirectTo: '/tabs/dashboard',
     pathMatch: 'full'
   }
 ];

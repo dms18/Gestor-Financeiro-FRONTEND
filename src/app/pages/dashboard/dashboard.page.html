@@ -1,0 +1,130 @@
+<ion-header [translucent]="true">
+  <ion-toolbar color="primary">
+    <ion-title>Dashboard</ion-title>
+  </ion-toolbar>
+  <ion-toolbar color="primary">
+    <ion-segment [(ngModel)]="filtroTipoPessoa" (ionChange)="onFiltroChange()">
+      <ion-segment-button value="">
+        <ion-label>Geral</ion-label>
+      </ion-segment-button>
+      <ion-segment-button value="PF">
+        <ion-label>PF</ion-label>
+      </ion-segment-button>
+      <ion-segment-button value="PJ">
+        <ion-label>PJ</ion-label>
+      </ion-segment-button>
+    </ion-segment>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  <ion-refresher slot="fixed" (ionRefresh)="carregarDados($event)">
+    <ion-refresher-content></ion-refresher-content>
+  </ion-refresher>
+
+  <div class="ion-padding-horizontal ion-padding-top">
+    <p class="saudacao" *ngIf="usuario">Olá, {{ usuario.nome }} 👋</p>
+  </div>
+
+  <!-- Cards de resumo -->
+  <div class="cards-resumo ion-padding-horizontal">
+    <ion-card class="card-saldo">
+      <ion-card-content>
+        <span class="rotulo">Saldo do período</span>
+        <span class="valor" [class.negativo]="resumo.saldo < 0">
+          {{ resumo.saldo | currency:'BRL':'symbol':'1.2-2' }}
+        </span>
+      </ion-card-content>
+    </ion-card>
+
+    <div class="cards-linha">
+      <ion-card class="card-mini receitas">
+        <ion-card-content>
+          <ion-icon name="arrow-up-circle"></ion-icon>
+          <span class="rotulo">Receitas</span>
+          <span class="valor">{{ resumo.totalReceitas | currency:'BRL':'symbol':'1.2-2' }}</span>
+        </ion-card-content>
+      </ion-card>
+
+      <ion-card class="card-mini despesas">
+        <ion-card-content>
+          <ion-icon name="arrow-down-circle"></ion-icon>
+          <span class="rotulo">Despesas</span>
+          <span class="valor">{{ resumo.totalDespesas | currency:'BRL':'symbol':'1.2-2' }}</span>
+        </ion-card-content>
+      </ion-card>
+    </div>
+  </div>
+
+  <!-- Gráfico de barras (CSS puro) -->
+  <ion-card class="ion-margin-horizontal">
+    <ion-card-header>
+      <ion-card-title>Receitas vs Despesas</ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      <div class="barra-grafico">
+        <div class="barra-label">
+          <span>Receitas</span>
+          <span>{{ percentualReceitas | number:'1.0-0' }}%</span>
+        </div>
+        <div class="barra-fundo">
+          <div class="barra-preenchida receita" [style.width.%]="percentualReceitas"></div>
+        </div>
+      </div>
+
+      <div class="barra-grafico">
+        <div class="barra-label">
+          <span>Despesas</span>
+          <span>{{ percentualDespesas | number:'1.0-0' }}%</span>
+        </div>
+        <div class="barra-fundo">
+          <div class="barra-preenchida despesa" [style.width.%]="percentualDespesas"></div>
+        </div>
+      </div>
+    </ion-card-content>
+  </ion-card>
+
+  <!-- Alertas sazonais -->
+  <ion-card *ngIf="alertasAtivos.length > 0" class="ion-margin-horizontal">
+    <ion-card-header>
+      <ion-card-title>
+        <ion-icon name="notifications" color="warning"></ion-icon>
+        Alertas Sazonais
+      </ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      <ion-chip *ngFor="let a of alertasAtivos" [color]="corImpacto(a.nivelImpacto)">
+        <ion-icon name="calendar"></ion-icon>
+        <ion-label>{{ a.nome }} ({{ a.nivelImpacto }})</ion-label>
+      </ion-chip>
+    </ion-card-content>
+  </ion-card>
+
+  <!-- Últimas transações -->
+  <ion-list-header>
+    <ion-label>Últimas Transações</ion-label>
+  </ion-list-header>
+
+  <ion-list>
+    <ion-item *ngFor="let t of ultimasTransacoes">
+      <ion-icon
+        slot="start"
+        [name]="t.tipo === 'RECEITA' ? 'arrow-up-circle' : 'arrow-down-circle'"
+        [color]="t.tipo === 'RECEITA' ? 'success' : 'danger'"
+      ></ion-icon>
+      <ion-label>
+        <h2>{{ t.descricao }}</h2>
+        <p>{{ t.data | date:'dd/MM/yyyy' }} • {{ t.tipoPessoa }}</p>
+      </ion-label>
+      <ion-text slot="end" [color]="t.tipo === 'RECEITA' ? 'success' : 'danger'">
+        <strong>{{ t.tipo === 'RECEITA' ? '+' : '-' }} {{ t.valor | currency:'BRL':'symbol':'1.2-2' }}</strong>
+      </ion-text>
+    </ion-item>
+
+    <ion-item *ngIf="!carregando && ultimasTransacoes.length === 0">
+      <ion-label class="ion-text-center" color="medium">
+        Nenhuma transação registrada
+      </ion-label>
+    </ion-item>
+  </ion-list>
+</ion-content>

@@ -1,0 +1,99 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-title>Registrar</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true" class="ion-padding">
+  <div class="container">
+    <h1>Criar Conta</h1>
+
+    <form [formGroup]="registerForm">
+      <ion-item>
+        <ion-label position="stacked">Nome</ion-label>
+        <ion-input
+          formControlName="nome"
+          type="text"
+          placeholder="Seu nome completo"
+        ></ion-input>
+      </ion-item>
+
+      <ion-item>
+        <ion-label position="stacked">Email</ion-label>
+        <ion-input
+          formControlName="email"
+          type="email"
+          placeholder="seu@email.com"
+        ></ion-input>
+      </ion-item>
+
+      <ion-item>
+        <ion-label position="stacked">CPF (opcional)</ion-label>
+        <ion-input
+          formControlName="cpf"
+          type="text"
+          placeholder="000.000.000-00"
+        ></ion-input>
+      </ion-item>
+
+      <ion-item>
+        <ion-label position="stacked">CNPJ (opcional)</ion-label>
+        <ion-input
+          formControlName="cnpj"
+          type="text"
+          placeholder="00.000.000/0000-00"
+        ></ion-input>
+      </ion-item>
+
+      <ion-item>
+        <ion-label position="stacked">Tipo de Perfil</ion-label>
+        <ion-select formControlName="perfil">
+          <ion-select-option value="PF">Pessoa Física</ion-select-option>
+          <ion-select-option value="PJ">Pessoa Jurídica</ion-select-option>
+          <ion-select-option value="AMBOS">Ambos</ion-select-option>
+        </ion-select>
+      </ion-item>
+
+      <ion-item>
+        <ion-label position="stacked">Senha</ion-label>
+        <ion-input
+          formControlName="senha"
+          type="password"
+          placeholder="Mínimo 6 caracteres"
+        ></ion-input>
+      </ion-item>
+
+      <ion-item>
+        <ion-label position="stacked">Confirmar Senha</ion-label>
+        <ion-input
+          formControlName="confirmacaoSenha"
+          type="password"
+          placeholder="Repita a senha"
+        ></ion-input>
+      </ion-item>
+
+      <ion-item *ngIf="registerForm.get('confirmacaoSenha')?.value && registerForm.hasError('senhasNaoIguais')">
+        <ion-label color="danger">As senhas não coincidem</ion-label>
+      </ion-item>
+
+      <ion-button
+        expand="block"
+        color="primary"
+        (click)="registrar()"
+        [disabled]="registerForm.invalid"
+      >
+        Registrar
+      </ion-button>
+    </form>
+
+    <div class="login-link">
+      <p>
+        Já tem conta?
+        <ion-button fill="clear" (click)="irParaLogin()">
+          Faça login
+        </ion-button>
+      </p>
+    </div>
+  </div>
+</ion-content>
+
