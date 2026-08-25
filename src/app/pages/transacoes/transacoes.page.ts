@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, HostListener } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { AlertController, LoadingController, ToastController } from '@ionic/angular';
 import { TransacaoService } from '../../services/transacao.service';
@@ -130,6 +130,13 @@ export class TransacoesPage {
     this.modalAberto = false;
   }
 
+  @HostListener('document:keydown.escape')
+  onEsc() {
+    if (this.modalAberto) {
+      this.fecharModal();
+    }
+  }
+
   async salvar() {
     if (this.transacaoForm.invalid) {
       this.mostrarToast('Preencha os campos obrigatórios');
@@ -156,9 +163,9 @@ export class TransacoesPage {
         this.mostrarToast(this.editandoId ? 'Transação atualizada' : 'Transação criada');
         this.carregarTransacoes();
       },
-      error: () => {
+      error: (erro) => {
         loading.dismiss();
-        this.mostrarToast('Erro ao salvar transação');
+        this.mostrarToast(erro?.error?.message || 'Erro ao salvar transação');
       }
     });
   }

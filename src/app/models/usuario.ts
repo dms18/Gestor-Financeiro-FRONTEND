@@ -6,6 +6,8 @@ export interface Usuario {
   cnpj?: string;
   perfil: string;
   ativo: boolean;
+  fotoPerfil?: string | null;
+  interfaceInicial?: string | null;
 }
 
 export interface LoginRequest {
@@ -26,4 +28,5 @@ export interface RegisterRequest {
   cpf?: string;
   cnpj?: string;
   perfil: string;
+  aceiteTermos: boolean;
 }

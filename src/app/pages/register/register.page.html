@@ -76,6 +76,18 @@
         <ion-label color="danger">As senhas não coincidem</ion-label>
       </ion-item>
 
+      <ion-item lines="none" class="aceite-item">
+        <ion-checkbox
+          slot="start"
+          formControlName="aceiteTermos"
+          aria-label="Aceito os Termos de Uso e a Política de Privacidade"
+        ></ion-checkbox>
+        <ion-label class="ion-text-wrap aceite-label">
+          Li e aceito os
+          <a routerLink="/termos">Termos de Uso e a Política de Privacidade</a>.
+        </ion-label>
+      </ion-item>
+
       <ion-button
         expand="block"
         color="primary"

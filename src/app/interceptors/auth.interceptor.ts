@@ -8,9 +8,10 @@ export class AuthInterceptor implements HttpInterceptor {
   constructor(private authService: AuthService) {}
 
   intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
+    const isAuthRoute = req.url.includes('/auth/login') || req.url.includes('/auth/register');
     const token = this.authService.getToken();
 
-    if (token) {
+    if (token && !isAuthRoute) {
       req = req.clone({
         setHeaders: {
           Authorization: `Bearer ${token}`

@@ -1,0 +1,39 @@
+.termos {
+  max-width: 760px;
+  margin: 0 auto;
+  line-height: 1.6;
+
+  h1 {
+    font-size: 22px;
+    font-weight: 700;
+    margin-bottom: 4px;
+  }
+
+  .meta {
+    color: var(--ion-color-medium);
+    margin-top: 0;
+    font-size: 13px;
+  }
+
+  h2 {
+    font-size: 17px;
+    font-weight: 600;
+    margin-top: 24px;
+  }
+
+  ul {
+    padding-left: 20px;
+  }
+
+  li {
+    margin-bottom: 6px;
+  }
+
+  .rodape {
+    margin-top: 24px;
+    padding-top: 16px;
+    border-top: 1px solid var(--ion-color-light-shade);
+    color: var(--ion-color-medium);
+    font-size: 14px;
+  }
+}

@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, HostListener } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { AlertController, LoadingController, ToastController } from '@ionic/angular';
 import { InvestimentoService } from '../../services/investimento.service';
@@ -110,6 +110,13 @@ export class InvestimentosPage {
     this.modalAberto = false;
   }
 
+  @HostListener('document:keydown.escape')
+  onEsc() {
+    if (this.modalAberto) {
+      this.fecharModal();
+    }
+  }
+
   async salvar() {
     if (this.investimentoForm.invalid) {
       this.mostrarToast('Preencha os campos obrigatórios');
@@ -131,9 +138,9 @@ export class InvestimentosPage {
         this.mostrarToast(this.editandoId ? 'Investimento atualizado' : 'Investimento criado');
         this.carregarInvestimentos();
       },
-      error: () => {
+      error: (erro) => {
         loading.dismiss();
-        this.mostrarToast('Erro ao salvar investimento');
+        this.mostrarToast(erro?.error?.message || 'Erro ao salvar investimento');
       }
     });
   }

@@ -1,0 +1,117 @@
+<ion-header [translucent]="true">
+  <ion-toolbar color="primary">
+    <ion-title>Contas Bancárias</ion-title>
+  </ion-toolbar>
+  <ion-toolbar color="primary">
+    <ion-segment [(ngModel)]="filtroTipoPessoa">
+      <ion-segment-button value="">
+        <ion-label>Todas</ion-label>
+      </ion-segment-button>
+      <ion-segment-button value="PF">
+        <ion-label>PF</ion-label>
+      </ion-segment-button>
+      <ion-segment-button value="PJ">
+        <ion-label>PJ</ion-label>
+      </ion-segment-button>
+    </ion-segment>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  <ion-refresher slot="fixed" (ionRefresh)="carregarContas($event)">
+    <ion-refresher-content></ion-refresher-content>
+  </ion-refresher>
+
+  <div *ngIf="!carregando && contasFiltradas.length === 0" class="ion-padding ion-text-center empty-state">
+    <ion-icon name="card-outline"></ion-icon>
+    <p>Nenhuma conta cadastrada.</p>
+    <ion-button fill="clear" (click)="abrirModalNova()">Cadastrar primeira conta</ion-button>
+  </div>
+
+  <ion-list>
+    <ion-item-sliding *ngFor="let c of contasFiltradas">
+      <ion-item button (click)="abrirModalEditar(c)">
+        <ion-icon slot="start" name="business-outline" color="primary"></ion-icon>
+        <ion-label>
+          <h2>{{ c.nome }}</h2>
+          <p *ngIf="c.instituicao">{{ c.instituicao }}</p>
+          <p *ngIf="c.numeroConta">Conta: {{ c.numeroConta }}</p>
+          <p>{{ rotuloTipo(c.tipo) }} • {{ c.tipoPessoa }}</p>
+        </ion-label>
+        <ion-text slot="end">
+          <strong>{{ c.saldo | currency:'BRL':'symbol':'1.2-2' }}</strong>
+        </ion-text>
+      </ion-item>
+
+      <ion-item-options side="end">
+        <ion-item-option color="danger" (click)="confirmarExclusao(c)" aria-label="Excluir conta">
+          <ion-icon slot="icon-only" name="trash" aria-hidden="true"></ion-icon>
+        </ion-item-option>
+      </ion-item-options>
+    </ion-item-sliding>
+  </ion-list>
+
+  <ion-fab vertical="bottom" horizontal="end" slot="fixed">
+    <ion-fab-button color="primary" (click)="abrirModalNova()" aria-label="Nova conta">
+      <ion-icon name="add" aria-hidden="true"></ion-icon>
+    </ion-fab-button>
+  </ion-fab>
+
+  <div class="form-overlay" *ngIf="modalAberto" (click)="fecharModal()">
+    <div class="form-painel" (click)="$event.stopPropagation()">
+      <ion-toolbar color="primary">
+        <ion-title>{{ editandoId ? 'Editar' : 'Nova' }} Conta</ion-title>
+        <ion-buttons slot="end">
+          <ion-button (click)="fecharModal()">Fechar</ion-button>
+        </ion-buttons>
+      </ion-toolbar>
+
+      <div class="form-conteudo">
+        <form [formGroup]="contaForm">
+          <ion-list>
+            <ion-item>
+              <ion-label position="stacked">Nome da conta *</ion-label>
+              <ion-input formControlName="nome" placeholder="Ex: Conta principal"></ion-input>
+            </ion-item>
+
+            <ion-item>
+              <ion-label position="stacked">Instituição financeira</ion-label>
+              <ion-input formControlName="instituicao" placeholder="Ex: Banco do Brasil, Nubank"></ion-input>
+            </ion-item>
+
+            <ion-item>
+              <ion-label position="stacked">Número da conta</ion-label>
+              <ion-input formControlName="numeroConta" inputmode="text" placeholder="Ex: 12345-6"></ion-input>
+            </ion-item>
+
+            <ion-item>
+              <ion-label position="stacked">Tipo *</ion-label>
+              <ion-select formControlName="tipo" interface="alert">
+                <ion-select-option value="CORRENTE">Conta Corrente</ion-select-option>
+                <ion-select-option value="POUPANCA">Poupança</ion-select-option>
+                <ion-select-option value="CAIXA">Caixa</ion-select-option>
+              </ion-select>
+            </ion-item>
+
+            <ion-item>
+              <ion-label position="stacked">Saldo inicial *</ion-label>
+              <ion-input type="number" formControlName="saldo" placeholder="0,00"></ion-input>
+            </ion-item>
+
+            <ion-item>
+              <ion-label position="stacked">Vínculo *</ion-label>
+              <ion-select formControlName="tipoPessoa" interface="alert">
+                <ion-select-option value="PF">Pessoa Física</ion-select-option>
+                <ion-select-option value="PJ">Pessoa Jurídica</ion-select-option>
+              </ion-select>
+            </ion-item>
+          </ion-list>
+
+          <ion-button expand="block" class="ion-margin-top" (click)="salvar()" [disabled]="contaForm.invalid">
+            Salvar
+          </ion-button>
+        </form>
+      </div>
+    </div>
+  </div>
+</ion-content>

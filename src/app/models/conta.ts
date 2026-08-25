@@ -4,6 +4,8 @@ export type TipoPessoa = 'PF' | 'PJ';
 export interface Conta {
   id?: number;
   nome: string;
+  instituicao?: string;
+  numeroConta?: string;
   tipo: TipoConta;
   saldo: number;
   tipoPessoa: TipoPessoa;

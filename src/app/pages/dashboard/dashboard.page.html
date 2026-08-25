@@ -38,7 +38,8 @@
     </ion-card>
 
     <div class="cards-linha">
-      <ion-card class="card-mini receitas">
+      <ion-card class="card-mini receitas"
+                [class.destaque-positivo]="resumo.totalReceitas > resumo.totalDespesas">
         <ion-card-content>
           <ion-icon name="arrow-up-circle"></ion-icon>
           <span class="rotulo">Receitas</span>
@@ -46,7 +47,8 @@
         </ion-card-content>
       </ion-card>
 
-      <ion-card class="card-mini despesas">
+      <ion-card class="card-mini despesas"
+                [class.destaque-negativo]="resumo.totalDespesas > resumo.totalReceitas">
         <ion-card-content>
           <ion-icon name="arrow-down-circle"></ion-icon>
           <span class="rotulo">Despesas</span>

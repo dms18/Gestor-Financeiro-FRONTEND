@@ -25,6 +25,7 @@ export class DashboardPage {
   ultimasTransacoes: Transacao[] = [];
   alertasAtivos: Sazonalidade[] = [];
   carregando = false;
+  private interfaceAplicada = false;
 
   constructor(
     private transacaoService: TransacaoService,
@@ -33,8 +34,23 @@ export class DashboardPage {
   ) {}
 
   ionViewWillEnter() {
-    this.authService.getUsuarioAtual().subscribe(u => (this.usuario = u));
+    this.authService.getUsuarioAtual().subscribe(u => {
+      this.usuario = u;
+      // Aplica a interface inicial preferida apenas uma vez (ao entrar após o login).
+      // Depois, respeita o filtro que o usuário selecionar durante a sessão.
+      if (!this.interfaceAplicada && u) {
+        this.filtroTipoPessoa = this.mapInterfaceParaFiltro(u.interfaceInicial);
+        this.interfaceAplicada = true;
+      }
+    });
     this.carregarDados();
+  }
+
+  private mapInterfaceParaFiltro(interfaceInicial?: string | null): '' | TipoPessoa {
+    if (interfaceInicial === 'PF' || interfaceInicial === 'PJ') {
+      return interfaceInicial;
+    }
+    return ''; // AMBOS ou não definido → visão geral
   }
 
   onFiltroChange() {

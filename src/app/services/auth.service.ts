@@ -36,6 +36,12 @@ export class AuthService {
     localStorage.setItem('usuario', JSON.stringify(response.usuario));
   }
 
+  /** Atualiza o usuário guardado localmente e notifica os assinantes. */
+  atualizarUsuarioLocal(usuario: Usuario): void {
+    localStorage.setItem('usuario', JSON.stringify(usuario));
+    this.usuarioSubject.next(usuario);
+  }
+
   getToken(): string | null {
     const token = localStorage.getItem('auth_token');
     return token;

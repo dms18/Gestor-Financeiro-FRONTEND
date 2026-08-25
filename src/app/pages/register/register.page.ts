@@ -27,7 +27,8 @@ export class RegisterPage implements OnInit {
       confirmacaoSenha: ['', [Validators.required]],
       cpf: [''],
       cnpj: [''],
-      perfil: ['PF', Validators.required]
+      perfil: ['PF', Validators.required],
+      aceiteTermos: [false, Validators.requiredTrue]
     }, { validators: this.senhasIguais });
   }
 
@@ -41,7 +42,11 @@ export class RegisterPage implements OnInit {
 
   async registrar() {
     if (this.registerForm.invalid) {
-      this.mostrarToast('Por favor, preencha todos os campos corretamente');
+      if (this.registerForm.get('aceiteTermos')?.invalid) {
+        this.mostrarToast('É necessário aceitar os Termos de Uso e a Política de Privacidade');
+      } else {
+        this.mostrarToast('Por favor, preencha todos os campos corretamente');
+      }
       return;
     }
 

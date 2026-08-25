@@ -2,16 +2,49 @@
   text-align: center;
   margin-bottom: 16px;
 
-  ion-avatar {
+  .avatar-wrapper {
+    position: relative;
     width: 100px;
     height: 100px;
     margin: 0 auto 12px;
+    cursor: pointer;
+  }
+
+  ion-avatar.avatar-perfil {
+    width: 100px;
+    height: 100px;
     display: flex;
     align-items: center;
     justify-content: center;
+    background: var(--ion-color-light);
+
+    img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
 
     ion-icon {
       font-size: 100px;
+    }
+  }
+
+  .camera-badge {
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: var(--ion-color-primary);
+    color: var(--ion-color-primary-contrast);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 2px solid var(--ion-background-color, #fff);
+
+    ion-icon {
+      font-size: 16px;
     }
   }
 
@@ -29,4 +62,12 @@
 ion-list ion-item p {
   font-size: 12px;
   color: var(--ion-color-medium);
+}
+
+.tema-nota {
+  font-size: 12px;
+}
+
+ion-segment {
+  width: 100%;
 }

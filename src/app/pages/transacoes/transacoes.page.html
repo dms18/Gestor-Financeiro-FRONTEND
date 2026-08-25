@@ -47,21 +47,21 @@
       </ion-item>
 
       <ion-item-options side="end">
-        <ion-item-option color="danger" (click)="confirmarExclusao(t)">
-          <ion-icon slot="icon-only" name="trash"></ion-icon>
+        <ion-item-option color="danger" (click)="confirmarExclusao(t)" aria-label="Excluir transação">
+          <ion-icon slot="icon-only" name="trash" aria-hidden="true"></ion-icon>
         </ion-item-option>
       </ion-item-options>
     </ion-item-sliding>
   </ion-list>
 
   <ion-fab vertical="bottom" horizontal="end" slot="fixed">
-    <ion-fab-button color="primary" (click)="abrirModalNova()">
-      <ion-icon name="add"></ion-icon>
+    <ion-fab-button color="primary" (click)="abrirModalNova()" aria-label="Nova transação">
+      <ion-icon name="add" aria-hidden="true"></ion-icon>
     </ion-fab-button>
   </ion-fab>
 
-  <div class="form-overlay" *ngIf="modalAberto">
-    <div class="form-painel">
+  <div class="form-overlay" *ngIf="modalAberto" (click)="fecharModal()">
+    <div class="form-painel" (click)="$event.stopPropagation()">
       <ion-toolbar color="primary">
         <ion-title>{{ editandoId ? 'Editar' : 'Nova' }} Transação</ion-title>
         <ion-buttons slot="end">

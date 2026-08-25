@@ -7,9 +7,15 @@
 <ion-content [fullscreen]="true">
   <div *ngIf="usuario" class="ion-padding">
     <div class="avatar-section">
-      <ion-avatar>
-        <ion-icon name="person-circle" color="primary"></ion-icon>
-      </ion-avatar>
+      <div class="avatar-wrapper" (click)="gerenciarFoto()" role="button" aria-label="Alterar foto de perfil">
+        <ion-avatar class="avatar-perfil">
+          <img *ngIf="usuario.fotoPerfil" [src]="usuario.fotoPerfil" alt="Foto de perfil de {{ usuario.nome }}" />
+          <ion-icon *ngIf="!usuario.fotoPerfil" name="person-circle" color="primary" aria-hidden="true"></ion-icon>
+        </ion-avatar>
+        <span class="camera-badge" aria-hidden="true">
+          <ion-icon name="camera"></ion-icon>
+        </span>
+      </div>
       <h2>{{ usuario.nome }}</h2>
       <p>{{ usuario.email }}</p>
     </div>
@@ -53,6 +59,68 @@
           <p>CNPJ</p>
           <h3>{{ usuario.cnpj }}</h3>
         </ion-label>
+      </ion-item>
+    </ion-list>
+
+    <ion-list inset="true">
+      <ion-list-header>
+        <ion-label>Interface inicial</ion-label>
+      </ion-list-header>
+      <ion-item lines="none">
+        <ion-icon name="home-outline" slot="start" color="medium" aria-hidden="true"></ion-icon>
+        <ion-label class="ion-text-wrap">
+          <p>Tela carregada ao entrar</p>
+        </ion-label>
+      </ion-item>
+      <ion-item lines="none">
+        <ion-segment
+          [value]="usuario.interfaceInicial || 'AMBOS'"
+          (ionChange)="onInterfaceChange($any($event).detail.value)"
+          aria-label="Selecionar interface inicial"
+        >
+          <ion-segment-button value="PF">
+            <ion-label>PF</ion-label>
+          </ion-segment-button>
+          <ion-segment-button value="PJ">
+            <ion-label>PJ</ion-label>
+          </ion-segment-button>
+          <ion-segment-button value="AMBOS">
+            <ion-label>Ambos</ion-label>
+          </ion-segment-button>
+        </ion-segment>
+      </ion-item>
+    </ion-list>
+
+    <ion-list inset="true">
+      <ion-list-header>
+        <ion-label>Aparência</ion-label>
+      </ion-list-header>
+      <ion-item lines="none">
+        <ion-icon name="contrast-outline" slot="start" color="medium" aria-hidden="true"></ion-icon>
+        <ion-label>Tema</ion-label>
+      </ion-item>
+      <ion-item lines="none">
+        <ion-segment
+          [value]="temaMode"
+          (ionChange)="onTemaChange($any($event).detail.value)"
+          aria-label="Selecionar tema do aplicativo"
+        >
+          <ion-segment-button value="light">
+            <ion-icon name="sunny-outline" aria-hidden="true"></ion-icon>
+            <ion-label>Claro</ion-label>
+          </ion-segment-button>
+          <ion-segment-button value="auto">
+            <ion-icon name="phone-portrait-outline" aria-hidden="true"></ion-icon>
+            <ion-label>Automático</ion-label>
+          </ion-segment-button>
+          <ion-segment-button value="dark">
+            <ion-icon name="moon-outline" aria-hidden="true"></ion-icon>
+            <ion-label>Escuro</ion-label>
+          </ion-segment-button>
+        </ion-segment>
+      </ion-item>
+      <ion-item lines="none" *ngIf="temaMode === 'auto'">
+        <ion-note class="tema-nota">Seguindo a configuração do dispositivo.</ion-note>
       </ion-item>
     </ion-list>
 

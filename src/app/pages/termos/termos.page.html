@@ -1,0 +1,158 @@
+<ion-header [translucent]="true">
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/register" text="Voltar"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Termos e Privacidade</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true" class="ion-padding">
+  <div class="termos">
+    <h1>Termos de Uso e Política de Privacidade</h1>
+    <p class="meta">Gestor Financeiro MEI • Versão {{ versao }}</p>
+
+    <p>
+      Este documento reúne os <strong>Termos de Uso</strong> e a
+      <strong>Política de Privacidade</strong> do aplicativo Gestor Financeiro MEI
+      ("Aplicativo"), voltado à gestão financeira de Microempreendedores Individuais.
+      Ao criar uma conta, você declara ter lido, compreendido e aceito integralmente
+      as condições abaixo. O tratamento de dados pessoais observa a Lei nº 13.709/2018
+      (Lei Geral de Proteção de Dados Pessoais — LGPD).
+    </p>
+
+    <h2>1. Aceitação</h2>
+    <p>
+      O aceite destes Termos é <strong>requisito obrigatório</strong> para a criação da
+      conta e o uso do Aplicativo. Caso não concorde com qualquer condição, não conclua
+      o cadastro. O registro do aceite (versão e data/hora) é armazenado como comprovação
+      de consentimento.
+    </p>
+
+    <h2>2. Descrição do Serviço</h2>
+    <p>
+      O Aplicativo permite cadastrar contas, categorias, receitas e despesas, períodos de
+      sazonalidade e ideias de investimento, oferecendo resumos e alertas financeiros. O
+      serviço é fornecido "no estado em que se encontra", podendo evoluir ao longo do tempo.
+    </p>
+
+    <h2>3. Cadastro e Responsabilidades do Usuário</h2>
+    <ul>
+      <li>Fornecer informações verdadeiras, exatas e atualizadas.</li>
+      <li>Manter a confidencialidade das credenciais de acesso (e-mail e senha).</li>
+      <li>Responsabilizar-se pelas atividades realizadas em sua conta.</li>
+      <li>Utilizar o Aplicativo conforme a legislação vigente e estes Termos.</li>
+    </ul>
+
+    <h2>4. Dados Pessoais Tratados</h2>
+    <p>Para funcionar, o Aplicativo trata as seguintes categorias de dados:</p>
+    <ul>
+      <li>
+        <strong>Dados cadastrais:</strong> nome, e-mail, senha (armazenada de forma
+        criptografada com <em>bcrypt</em>), CPF e/ou CNPJ (opcionais), tipo de perfil
+        (PF, PJ ou ambos) e foto de perfil (opcional).
+      </li>
+      <li>
+        <strong>Dados financeiros fornecidos por você:</strong> contas, saldos, categorias,
+        transações (receitas/despesas), períodos de sazonalidade e ideias de investimento.
+      </li>
+      <li>
+        <strong>Dados técnicos e de uso:</strong> registros de acesso, logs de erro e dados
+        de telemetria (rastreamento de requisições) coletados para segurança, diagnóstico e
+        melhoria do serviço.
+      </li>
+    </ul>
+
+    <h2>5. Finalidades e Bases Legais</h2>
+    <ul>
+      <li>
+        <strong>Execução do serviço</strong> (art. 7º, V, LGPD — execução de contrato):
+        autenticar o acesso, armazenar e exibir seus dados financeiros e viabilizar as
+        funcionalidades do Aplicativo.
+      </li>
+      <li>
+        <strong>Consentimento</strong> (art. 7º, I, LGPD): tratamento de dados opcionais
+        (como CPF/CNPJ e foto de perfil) e o próprio aceite deste Termo.
+      </li>
+      <li>
+        <strong>Legítimo interesse / segurança</strong> (art. 7º, IX e X, LGPD): registros
+        técnicos, logs e telemetria para prevenção a fraudes, correção de falhas e melhoria
+        contínua, sempre de forma proporcional.
+      </li>
+    </ul>
+
+    <h2>6. Compartilhamento com Terceiros</h2>
+    <p>
+      O Aplicativo <strong>não vende</strong> seus dados pessoais. Para operar, pode utilizar
+      prestadores de serviço (operadores) que tratam dados em nome do controlador, como
+      provedores de infraestrutura e de observabilidade (por exemplo, serviço de telemetria
+      do <em>Microsoft Azure Application Insights</em>, que pode processar dados técnicos/logs).
+      Esses terceiros ficam obrigados a tratar os dados apenas conforme as finalidades aqui
+      descritas e a legislação aplicável.
+    </p>
+
+    <h2>7. Armazenamento e Segurança</h2>
+    <ul>
+      <li>Senhas nunca são armazenadas em texto puro (utiliza-se <em>hash bcrypt</em>).</li>
+      <li>O acesso é autenticado por token JWT, guardado localmente no seu dispositivo.</li>
+      <li>Adotam-se medidas técnicas e administrativas razoáveis para proteger os dados.</li>
+      <li>Nenhum sistema é totalmente imune a incidentes; em caso de incidente relevante, os titulares e a ANPD poderão ser comunicados nos termos da lei.</li>
+    </ul>
+
+    <h2>8. Retenção e Eliminação</h2>
+    <p>
+      Seus dados são mantidos enquanto a conta estiver ativa. Ao solicitar a exclusão da
+      conta, os dados pessoais serão eliminados ou anonimizados, ressalvadas as hipóteses de
+      guarda obrigatória previstas em lei.
+    </p>
+
+    <h2>9. Seus Direitos (art. 18 da LGPD)</h2>
+    <p>A qualquer momento você pode solicitar:</p>
+    <ul>
+      <li>Confirmação da existência de tratamento e acesso aos seus dados;</li>
+      <li>Correção de dados incompletos, inexatos ou desatualizados;</li>
+      <li>Anonimização, bloqueio ou eliminação de dados desnecessários ou excessivos;</li>
+      <li>Portabilidade dos dados;</li>
+      <li>Eliminação dos dados tratados com base no consentimento;</li>
+      <li>Informação sobre compartilhamentos;</li>
+      <li>Revogação do consentimento.</li>
+    </ul>
+
+    <h2>10. Armazenamento Local no Dispositivo</h2>
+    <p>
+      O Aplicativo utiliza armazenamento local (<em>localStorage</em>) para guardar o token de
+      sessão e preferências, viabilizando sua permanência conectado. Esses dados podem ser
+      removidos ao sair da conta ou limpar os dados do navegador/aplicativo.
+    </p>
+
+    <h2>11. Menores de Idade</h2>
+    <p>
+      O Aplicativo destina-se a maiores de 18 anos. Não coletamos intencionalmente dados de
+      menores sem o consentimento específico e em destaque de um dos pais ou responsável legal.
+    </p>
+
+    <h2>12. Alterações destes Termos</h2>
+    <p>
+      Estes Termos podem ser atualizados. Mudanças relevantes serão comunicadas no Aplicativo,
+      podendo ser exigido um novo aceite. A versão vigente é sempre identificada por número e data.
+    </p>
+
+    <h2>13. Encarregado (DPO) e Contato</h2>
+    <p>
+      Para exercer seus direitos ou tirar dúvidas sobre privacidade, entre em contato pelo
+      e-mail <strong>[preencher: e-mail de contato / encarregado]</strong>. As solicitações
+      serão respondidas nos prazos legais.
+    </p>
+
+    <h2>14. Legislação e Foro</h2>
+    <p>
+      Estes Termos são regidos pelas leis da República Federativa do Brasil. Fica eleito o foro
+      do domicílio do usuário para dirimir controvérsias, quando aplicável.
+    </p>
+
+    <p class="rodape">
+      Ao marcar a opção de aceite na tela de cadastro, você confirma que leu e concorda com
+      estes Termos de Uso e com a Política de Privacidade (versão {{ versao }}).
+    </p>
+  </div>
+</ion-content>

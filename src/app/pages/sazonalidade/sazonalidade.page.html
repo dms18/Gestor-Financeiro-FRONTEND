@@ -47,13 +47,13 @@
   </ion-card>
 
   <ion-fab vertical="bottom" horizontal="end" slot="fixed">
-    <ion-fab-button color="primary" (click)="abrirModalNovo()">
-      <ion-icon name="add"></ion-icon>
+    <ion-fab-button color="primary" (click)="abrirModalNovo()" aria-label="Novo período sazonal">
+      <ion-icon name="add" aria-hidden="true"></ion-icon>
     </ion-fab-button>
   </ion-fab>
 
-  <div class="form-overlay" *ngIf="modalAberto">
-    <div class="form-painel">
+  <div class="form-overlay" *ngIf="modalAberto" (click)="fecharModal()">
+    <div class="form-painel" (click)="$event.stopPropagation()">
       <ion-toolbar color="primary">
         <ion-title>{{ editandoId ? 'Editar' : 'Novo' }} Período</ion-title>
         <ion-buttons slot="end">

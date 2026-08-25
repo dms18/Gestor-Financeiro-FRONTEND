@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, HostListener } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { AlertController, LoadingController, ToastController } from '@ionic/angular';
 import { SazonalidadeService } from '../../services/sazonalidade.service';
@@ -122,6 +122,13 @@ export class SazonalidadePage {
     this.modalAberto = false;
   }
 
+  @HostListener('document:keydown.escape')
+  onEsc() {
+    if (this.modalAberto) {
+      this.fecharModal();
+    }
+  }
+
   async salvar() {
     if (this.sazonalidadeForm.invalid) {
       this.mostrarToast('Preencha os campos obrigatórios');
@@ -143,9 +150,9 @@ export class SazonalidadePage {
         this.mostrarToast(this.editandoId ? 'Período atualizado' : 'Período criado');
         this.carregarPeriodos();
       },
-      error: () => {
+      error: (erro) => {
         loading.dismiss();
-        this.mostrarToast('Erro ao salvar período');
+        this.mostrarToast(erro?.error?.message || 'Erro ao salvar período');
       }
     });
   }

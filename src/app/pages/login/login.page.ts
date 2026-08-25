@@ -46,7 +46,8 @@ export class LoginPage implements OnInit {
       },
       error: (error) => {
         loading.dismiss();
-        this.mostrarToast('Email ou senha incorretos');
+        const mensagem = error?.error?.message || 'Email ou senha incorretos';
+        this.mostrarToast(mensagem);
       }
     });
   }

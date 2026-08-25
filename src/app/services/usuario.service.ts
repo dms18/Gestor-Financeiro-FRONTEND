@@ -17,4 +17,12 @@ export class UsuarioService {
   atualizarPerfil(dados: Partial<Usuario>): Observable<Usuario> {
     return this.api.put<Usuario>('/usuarios/perfil', dados);
   }
+
+  atualizarFoto(foto: string | null): Observable<Usuario> {
+    return this.api.put<Usuario>('/usuarios/perfil/foto', { foto });
+  }
+
+  atualizarInterface(interfaceInicial: string): Observable<Usuario> {
+    return this.api.put<Usuario>('/usuarios/perfil/interface', { interfaceInicial });
+  }
 }

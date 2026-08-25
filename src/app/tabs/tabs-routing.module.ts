@@ -28,6 +28,16 @@ const routes: Routes = [
         ]
       },
       {
+        path: 'contas',
+        children: [
+          {
+            path: '',
+            loadChildren: () =>
+              import('../pages/contas/contas.module').then(m => m.ContasPageModule)
+          }
+        ]
+      },
+      {
         path: 'sazonalidade',
         children: [
           {
