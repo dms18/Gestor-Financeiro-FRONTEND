@@ -12,6 +12,7 @@ import { ToastController, LoadingController } from '@ionic/angular';
 export class LoginPage implements OnInit {
   loginForm: FormGroup;
   loading = false;
+  mostrarSenha = false;
 
   constructor(
     private fb: FormBuilder,
@@ -30,6 +31,7 @@ export class LoginPage implements OnInit {
 
   async login() {
     if (this.loginForm.invalid) {
+      this.loginForm.markAllAsTouched();
       this.mostrarToast('Por favor, preencha todos os campos corretamente');
       return;
     }

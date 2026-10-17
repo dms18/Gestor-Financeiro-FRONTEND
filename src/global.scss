@@ -20,6 +20,113 @@
 @import "~@ionic/angular/css/text-transformation.css";
 @import "~@ionic/angular/css/flex-utils.css";
 
+/* Foco visível para elementos nativos/customizados (teclado) */
+a:focus-visible,
+button:focus-visible,
+[role="button"]:focus-visible,
+[tabindex]:focus-visible {
+  outline: 2px solid var(--ion-color-primary);
+  outline-offset: 2px;
+  border-radius: var(--app-radius-sm);
+}
+
+/* Texto colorido de status com contraste AA (o tom base fica para ícones/barras) */
+ion-text.ion-color-success { color: var(--app-income-text) !important; }
+ion-text.ion-color-danger { color: var(--app-expense-text) !important; }
+ion-text.ion-color-warning { color: var(--app-warning-text) !important; }
+
+/* Painel de formulário recebe foco programático (sem anel; o foco é só para leitores de tela) */
+.form-painel:focus {
+  outline: none;
+}
+
+/* Barra de abas com 6 itens: em telas estreitas só a aba ativa mostra o texto
+   (o rótulo continua disponível para leitores de tela). */
+ion-tab-bar ion-tab-button {
+  min-width: 0;
+  max-width: none;
+  flex: 1 1 0;
+}
+
+@media (max-width: 479px) {
+  ion-tab-bar ion-tab-button.tab-selected {
+    flex: 1.7 1 0;
+  }
+
+  ion-tab-bar ion-tab-button:not(.tab-selected) ion-label {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+  }
+}
+
+@media (max-width: 359px) {
+  ion-tab-bar ion-tab-button.tab-selected {
+    flex: 2.3 1 0;
+  }
+}
+
+/* Telas largas: conteúdo centralizado com largura de leitura confortável */
+@media (min-width: 768px) {
+  ion-content::part(scroll) {
+    max-width: 720px;
+    margin: 0 auto;
+  }
+}
+
+/* Texto só para leitores de tela */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* Valores monetários alinhados (algarismos de mesma largura) */
+.valor,
+ion-text strong {
+  font-variant-numeric: tabular-nums;
+}
+
+/* Botões de ação em cartões: alvo de toque mínimo de 44px */
+.acoes ion-button {
+  min-height: var(--app-touch-min);
+}
+
+/* Estado vazio reutilizável */
+.empty-state {
+  margin-top: 20vh;
+  color: var(--app-text-muted);
+
+  ion-icon {
+    font-size: 4rem;
+    margin-bottom: var(--app-space-3);
+  }
+
+  p {
+    font-size: 1rem;
+    margin: 0 0 var(--app-space-2);
+  }
+}
+
+/* Respeita a preferência de movimento reduzido */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
 /* Overlay de formulário reutilizável (compatível com Ionic 5) */
 .form-overlay {
   position: fixed;
@@ -35,8 +142,9 @@
   width: 100%;
   max-width: 600px;
   max-height: 92vh;
+  max-height: 92dvh;
   background: var(--ion-background-color, #fff);
-  border-radius: 16px 16px 0 0;
+  border-radius: var(--app-radius-lg) var(--app-radius-lg) 0 0;
   display: flex;
   flex-direction: column;
   overflow: hidden;
@@ -50,7 +158,7 @@
 
 .form-conteudo {
   overflow-y: auto;
-  padding: 12px 16px 24px;
+  padding: var(--app-space-3) var(--app-space-4) calc(var(--app-space-6) + env(safe-area-inset-bottom));
 }
 
 /*
@@ -140,6 +248,47 @@
   --ion-color-light-contrast-rgb: 255, 255, 255;
   --ion-color-light-shade: #1b2431;
   --ion-color-light-tint: #35404b;
+
+  /** tokens semânticos do app (versão escura) **/
+  --app-income-text: #4ade80;
+  --app-expense-text: #f87171;
+  --app-warning-text: #fbbf24;
+  --app-text-muted: #9ca3af;
+  --app-on-primary-negative: #7f1d1d;
+
+  /** escala de cinzas do Ionic para o escuro (títulos de card, rótulos, bordas) **/
+  --ion-color-step-50: #1e1e1e;
+  --ion-color-step-100: #2a2a2a;
+  --ion-color-step-150: #363636;
+  --ion-color-step-200: #414141;
+  --ion-color-step-250: #4d4d4d;
+  --ion-color-step-300: #595959;
+  --ion-color-step-350: #656565;
+  --ion-color-step-400: #717171;
+  --ion-color-step-450: #7d7d7d;
+  --ion-color-step-500: #898989;
+  --ion-color-step-550: #949494;
+  --ion-color-step-600: #a0a0a0;
+  --ion-color-step-650: #acacac;
+  --ion-color-step-700: #b8b8b8;
+  --ion-color-step-750: #c4c4c4;
+  --ion-color-step-800: #d0d0d0;
+  --ion-color-step-850: #dbdbdb;
+  --ion-color-step-900: #e7e7e7;
+  --ion-color-step-950: #f3f3f3;
+}
+
+/* Barras de título no escuro: teal profundo com texto branco (o teal claro do tema
+   escuro deixava o texto das abas PF/PJ com contraste baixo). */
+@mixin app-dark-toolbars {
+  ion-toolbar.ion-color-primary {
+    --ion-color-primary: #0f766e;
+    --ion-color-primary-rgb: 15, 118, 110;
+    --ion-color-primary-contrast: #ffffff;
+    --ion-color-primary-contrast-rgb: 255, 255, 255;
+    --ion-color-primary-shade: #0d6861;
+    --ion-color-primary-tint: #2c867f;
+  }
 }
 
 @mixin app-dark-surfaces-ios {
@@ -167,13 +316,13 @@
 }
 
 /* 1) Escolha manual: escuro */
-body.dark { @include app-dark-colors; }
+body.dark { @include app-dark-colors; @include app-dark-toolbars; }
 .ios body.dark { @include app-dark-surfaces-ios; }
 .md body.dark { @include app-dark-surfaces-md; }
 
 /* 2) Automático: segue o dispositivo, exceto se o usuário forçou claro */
 @media (prefers-color-scheme: dark) {
-  body:not(.light) { @include app-dark-colors; }
+  body:not(.light) { @include app-dark-colors; @include app-dark-toolbars; }
   .ios body:not(.light) { @include app-dark-surfaces-ios; }
   .md body:not(.light) { @include app-dark-surfaces-md; }
 }

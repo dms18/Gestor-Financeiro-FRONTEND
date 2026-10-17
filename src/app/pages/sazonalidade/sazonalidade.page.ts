@@ -103,6 +103,8 @@ export class SazonalidadePage {
       descricao: '',
       nivelImpacto: 'MEDIO'
     });
+    this.sazonalidadeForm.markAsPristine();
+    this.sazonalidadeForm.markAsUntouched();
     this.modalAberto = true;
   }
 
@@ -115,6 +117,8 @@ export class SazonalidadePage {
       descricao: periodo.descricao || '',
       nivelImpacto: periodo.nivelImpacto
     });
+    this.sazonalidadeForm.markAsPristine();
+    this.sazonalidadeForm.markAsUntouched();
     this.modalAberto = true;
   }
 
@@ -122,15 +126,33 @@ export class SazonalidadePage {
     this.modalAberto = false;
   }
 
+  /** Fecha o painel; se houver dados digitados, pede confirmação antes de descartar. */
+  async tentarFechar() {
+    if (!this.sazonalidadeForm.dirty) {
+      this.fecharModal();
+      return;
+    }
+    const alert = await this.alertController.create({
+      header: 'Descartar alterações?',
+      message: 'Os dados preenchidos serão perdidos.',
+      buttons: [
+        { text: 'Continuar editando', role: 'cancel' },
+        { text: 'Descartar', role: 'destructive', handler: () => this.fecharModal() }
+      ]
+    });
+    await alert.present();
+  }
+
   @HostListener('document:keydown.escape')
   onEsc() {
     if (this.modalAberto) {
-      this.fecharModal();
+      this.tentarFechar();
     }
   }
 
   async salvar() {
     if (this.sazonalidadeForm.invalid) {
+      this.sazonalidadeForm.markAllAsTouched();
       this.mostrarToast('Preencha os campos obrigatórios');
       return;
     }

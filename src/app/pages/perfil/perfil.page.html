@@ -7,7 +7,7 @@
 <ion-content [fullscreen]="true">
   <div *ngIf="usuario" class="ion-padding">
     <div class="avatar-section">
-      <div class="avatar-wrapper" (click)="gerenciarFoto()" role="button" aria-label="Alterar foto de perfil">
+      <div class="avatar-wrapper" (click)="gerenciarFoto()" (keydown.enter)="gerenciarFoto()" (keydown.space)="$event.preventDefault(); gerenciarFoto()" role="button" tabindex="0" aria-label="Alterar foto de perfil">
         <ion-avatar class="avatar-perfil">
           <img *ngIf="usuario.fotoPerfil" [src]="usuario.fotoPerfil" alt="Foto de perfil de {{ usuario.nome }}" />
           <ion-icon *ngIf="!usuario.fotoPerfil" name="person-circle" color="primary" aria-hidden="true"></ion-icon>
@@ -63,6 +63,13 @@
     </ion-list>
 
     <ion-list inset="true">
+      <ion-item button detail="true" routerLink="/tabs/categorias">
+        <ion-icon name="pricetags-outline" slot="start" color="medium" aria-hidden="true"></ion-icon>
+        <ion-label>Categorias</ion-label>
+      </ion-item>
+    </ion-list>
+
+    <ion-list inset="true">
       <ion-list-header>
         <ion-label>Interface inicial</ion-label>
       </ion-list-header>
@@ -79,10 +86,10 @@
           aria-label="Selecionar interface inicial"
         >
           <ion-segment-button value="PF">
-            <ion-label>PF</ion-label>
+            <ion-label><span aria-hidden="true">PF</span><span class="sr-only">Pessoa física</span></ion-label>
           </ion-segment-button>
           <ion-segment-button value="PJ">
-            <ion-label>PJ</ion-label>
+            <ion-label><span aria-hidden="true">PJ</span><span class="sr-only">Pessoa jurídica</span></ion-label>
           </ion-segment-button>
           <ion-segment-button value="AMBOS">
             <ion-label>Ambos</ion-label>

@@ -1,14 +1,19 @@
 .saudacao {
-  font-size: 16px;
+  font-size: 1rem;
   font-weight: 500;
   margin: 0 0 4px;
+}
+
+.periodo-segment {
+  width: auto;
+  margin: var(--app-space-2) var(--app-space-4) var(--app-space-1);
 }
 
 .cards-resumo {
   .card-saldo {
     margin: 4px 0;
     background: var(--ion-color-primary);
-    color: #fff;
+    color: var(--ion-color-primary-contrast);
 
     ion-card-content {
       display: flex;
@@ -16,16 +21,16 @@
     }
 
     .rotulo {
-      font-size: 13px;
+      font-size: 0.8125rem;
       opacity: 0.85;
     }
 
     .valor {
-      font-size: 28px;
+      font-size: 1.75rem;
       font-weight: 700;
 
       &.negativo {
-        color: #ffd2d2;
+        color: var(--app-on-primary-negative);
       }
     }
   }
@@ -44,17 +49,17 @@
       }
 
       ion-icon {
-        font-size: 24px;
+        font-size: 1.5rem;
         margin-bottom: 4px;
       }
 
       .rotulo {
-        font-size: 12px;
-        color: var(--ion-color-medium);
+        font-size: 0.8125rem;
+        color: var(--app-text-muted);
       }
 
       .valor {
-        font-size: 17px;
+        font-size: 1.0625rem;
         font-weight: 600;
       }
 
@@ -68,14 +73,14 @@
         background: rgba(var(--ion-color-success-rgb), 0.16);
         box-shadow: inset 0 0 0 1px rgba(var(--ion-color-success-rgb), 0.4);
 
-        .valor { color: var(--ion-color-success-shade); }
+        .valor { color: var(--app-income-text); }
       }
 
       &.destaque-negativo {
         background: rgba(var(--ion-color-danger-rgb), 0.16);
         box-shadow: inset 0 0 0 1px rgba(var(--ion-color-danger-rgb), 0.4);
 
-        .valor { color: var(--ion-color-danger-shade); }
+        .valor { color: var(--app-expense-text); }
       }
     }
   }
@@ -87,7 +92,7 @@
   .barra-label {
     display: flex;
     justify-content: space-between;
-    font-size: 13px;
+    font-size: 0.8125rem;
     margin-bottom: 4px;
   }
 

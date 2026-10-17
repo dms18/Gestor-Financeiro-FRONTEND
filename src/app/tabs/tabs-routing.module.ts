@@ -58,6 +58,16 @@ const routes: Routes = [
         ]
       },
       {
+        path: 'categorias',
+        children: [
+          {
+            path: '',
+            loadChildren: () =>
+              import('../pages/categorias/categorias.module').then(m => m.CategoriasPageModule)
+          }
+        ]
+      },
+      {
         path: 'perfil',
         children: [
           {

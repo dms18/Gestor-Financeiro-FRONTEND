@@ -1,0 +1,17 @@
+:host {
+  display: block;
+}
+
+.campo-erro {
+  display: flex;
+  align-items: center;
+  gap: var(--app-space-1);
+  padding: var(--app-space-1) var(--erro-padding-start, var(--app-space-4)) var(--app-space-2);
+  font-size: 0.8125rem;
+  color: var(--app-expense-text);
+
+  ion-icon {
+    flex-shrink: 0;
+    font-size: 1rem;
+  }
+}

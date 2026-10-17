@@ -8,10 +8,10 @@
         <ion-label>Geral</ion-label>
       </ion-segment-button>
       <ion-segment-button value="PF">
-        <ion-label>PF</ion-label>
+        <ion-label><span aria-hidden="true">PF</span><span class="sr-only">Pessoa física</span></ion-label>
       </ion-segment-button>
       <ion-segment-button value="PJ">
-        <ion-label>PJ</ion-label>
+        <ion-label><span aria-hidden="true">PJ</span><span class="sr-only">Pessoa jurídica</span></ion-label>
       </ion-segment-button>
     </ion-segment>
   </ion-toolbar>
@@ -23,14 +23,20 @@
   </ion-refresher>
 
   <div class="ion-padding-horizontal ion-padding-top">
-    <p class="saudacao" *ngIf="usuario">Olá, {{ usuario.nome }} 👋</p>
+    <p class="saudacao" *ngIf="usuario">Olá, {{ usuario.nome }}</p>
   </div>
+
+  <ion-segment class="periodo-segment" [(ngModel)]="periodo" (ionChange)="onFiltroChange()" aria-label="Período do resumo">
+    <ion-segment-button value="mes"><ion-label>Este mês</ion-label></ion-segment-button>
+    <ion-segment-button value="anterior"><ion-label>Anterior</ion-label></ion-segment-button>
+    <ion-segment-button value="tudo"><ion-label>Tudo</ion-label></ion-segment-button>
+  </ion-segment>
 
   <!-- Cards de resumo -->
   <div class="cards-resumo ion-padding-horizontal">
     <ion-card class="card-saldo">
       <ion-card-content>
-        <span class="rotulo">Saldo do período</span>
+        <span class="rotulo">Saldo — {{ rotuloPeriodo }}</span>
         <span class="valor" [class.negativo]="resumo.saldo < 0">
           {{ resumo.saldo | currency:'BRL':'symbol':'1.2-2' }}
         </span>
@@ -41,7 +47,7 @@
       <ion-card class="card-mini receitas"
                 [class.destaque-positivo]="resumo.totalReceitas > resumo.totalDespesas">
         <ion-card-content>
-          <ion-icon name="arrow-up-circle"></ion-icon>
+          <ion-icon name="arrow-up-circle" aria-hidden="true"></ion-icon>
           <span class="rotulo">Receitas</span>
           <span class="valor">{{ resumo.totalReceitas | currency:'BRL':'symbol':'1.2-2' }}</span>
         </ion-card-content>
@@ -50,7 +56,7 @@
       <ion-card class="card-mini despesas"
                 [class.destaque-negativo]="resumo.totalDespesas > resumo.totalReceitas">
         <ion-card-content>
-          <ion-icon name="arrow-down-circle"></ion-icon>
+          <ion-icon name="arrow-down-circle" aria-hidden="true"></ion-icon>
           <span class="rotulo">Despesas</span>
           <span class="valor">{{ resumo.totalDespesas | currency:'BRL':'symbol':'1.2-2' }}</span>
         </ion-card-content>
@@ -69,7 +75,7 @@
           <span>Receitas</span>
           <span>{{ percentualReceitas | number:'1.0-0' }}%</span>
         </div>
-        <div class="barra-fundo">
+        <div class="barra-fundo" role="progressbar" aria-label="Receitas" aria-valuemin="0" aria-valuemax="100" [attr.aria-valuenow]="percentualReceitas">
           <div class="barra-preenchida receita" [style.width.%]="percentualReceitas"></div>
         </div>
       </div>
@@ -79,7 +85,7 @@
           <span>Despesas</span>
           <span>{{ percentualDespesas | number:'1.0-0' }}%</span>
         </div>
-        <div class="barra-fundo">
+        <div class="barra-fundo" role="progressbar" aria-label="Despesas" aria-valuemin="0" aria-valuemax="100" [attr.aria-valuenow]="percentualDespesas">
           <div class="barra-preenchida despesa" [style.width.%]="percentualDespesas"></div>
         </div>
       </div>
@@ -90,14 +96,14 @@
   <ion-card *ngIf="alertasAtivos.length > 0" class="ion-margin-horizontal">
     <ion-card-header>
       <ion-card-title>
-        <ion-icon name="notifications" color="warning"></ion-icon>
+        <ion-icon name="notifications" color="warning" aria-hidden="true"></ion-icon>
         Alertas Sazonais
       </ion-card-title>
     </ion-card-header>
     <ion-card-content>
       <ion-chip *ngFor="let a of alertasAtivos" [color]="corImpacto(a.nivelImpacto)">
-        <ion-icon name="calendar"></ion-icon>
-        <ion-label>{{ a.nome }} ({{ a.nivelImpacto }})</ion-label>
+        <ion-icon name="calendar" aria-hidden="true"></ion-icon>
+        <ion-label>{{ a.nome }} ({{ a.nivelImpacto | rotuloEnum }})</ion-label>
       </ion-chip>
     </ion-card-content>
   </ion-card>
@@ -107,15 +113,25 @@
     <ion-label>Últimas Transações</ion-label>
   </ion-list-header>
 
+  <ion-list *ngIf="carregando && ultimasTransacoes.length === 0" aria-busy="true" aria-label="Carregando">
+    <ion-item *ngFor="let _ of [1, 2, 3]" lines="none">
+      <ion-label>
+        <h3><ion-skeleton-text style="width: 60%"></ion-skeleton-text></h3>
+        <p><ion-skeleton-text style="width: 40%"></ion-skeleton-text></p>
+      </ion-label>
+    </ion-item>
+  </ion-list>
+
   <ion-list>
     <ion-item *ngFor="let t of ultimasTransacoes">
       <ion-icon
         slot="start"
         [name]="t.tipo === 'RECEITA' ? 'arrow-up-circle' : 'arrow-down-circle'"
         [color]="t.tipo === 'RECEITA' ? 'success' : 'danger'"
+        aria-hidden="true"
       ></ion-icon>
       <ion-label>
-        <h2>{{ t.descricao }}</h2>
+        <h2><span class="sr-only">{{ t.tipo === 'RECEITA' ? 'Receita: ' : 'Despesa: ' }}</span>{{ t.descricao }}</h2>
         <p>{{ t.data | date:'dd/MM/yyyy' }} • {{ t.tipoPessoa }}</p>
       </ion-label>
       <ion-text slot="end" [color]="t.tipo === 'RECEITA' ? 'success' : 'danger'">

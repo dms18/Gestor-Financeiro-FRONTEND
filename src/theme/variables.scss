@@ -88,4 +88,28 @@
   --ion-text-color-rgb: 31, 41, 55;
   --ion-card-background: #ffffff;
   --ion-item-background: #ffffff;
+  --ion-border-color: #e5e7eb;
+
+  /** tokens semânticos do app (texto com contraste AA ≥ 4,5:1 sobre branco) **/
+  --app-income-text: #15803d;
+  --app-expense-text: #b91c1c;
+  --app-warning-text: #b45309;
+  --app-text-muted: #4b5563;
+  --app-on-primary-negative: #ffd2d2; // valor negativo sobre fundo primário
+
+  /** escala de espaçamento **/
+  --app-space-1: 4px;
+  --app-space-2: 8px;
+  --app-space-3: 12px;
+  --app-space-4: 16px;
+  --app-space-6: 24px;
+  --app-space-8: 32px;
+
+  /** raios **/
+  --app-radius-sm: 8px;
+  --app-radius-md: 12px;
+  --app-radius-lg: 16px;
+
+  /** alvo mínimo de toque (WCAG 2.5.8 / HIG) **/
+  --app-touch-min: 44px;
 }

@@ -1,5 +1,6 @@
 import { Component, HostListener } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { Router } from '@angular/router';
 import { AlertController, LoadingController, ToastController } from '@ionic/angular';
 import { TransacaoService } from '../../services/transacao.service';
 import { CategoriaService } from '../../services/categoria.service';
@@ -32,7 +33,8 @@ export class TransacoesPage {
     private contaService: ContaService,
     private alertController: AlertController,
     private loadingController: LoadingController,
-    private toastController: ToastController
+    private toastController: ToastController,
+    private router: Router
   ) {
     this.transacaoForm = this.fb.group({
       descricao: ['', [Validators.required]],
@@ -43,6 +45,24 @@ export class TransacoesPage {
       categoriaId: [null],
       contaId: [null]
     });
+
+    // Ao trocar receita/despesa, descarta a categoria escolhida se ela não serve para o novo tipo.
+    this.transacaoForm.get('tipo')?.valueChanges.subscribe(() => {
+      const atual = this.transacaoForm.get('categoriaId')?.value;
+      if (atual != null && !this.categoriasDoTipo.some(c => c.id === atual)) {
+        this.transacaoForm.get('categoriaId')?.setValue(null);
+      }
+    });
+  }
+
+  get categoriasDoTipo(): Categoria[] {
+    const tipo = this.transacaoForm.get('tipo')?.value;
+    return this.categorias.filter(c => !c.tipo || c.tipo === tipo);
+  }
+
+  irParaCategorias() {
+    this.modalAberto = false;
+    this.router.navigate(['/tabs/categorias']);
   }
 
   ionViewWillEnter() {
@@ -109,6 +129,8 @@ export class TransacoesPage {
       categoriaId: null,
       contaId: null
     });
+    this.transacaoForm.markAsPristine();
+    this.transacaoForm.markAsUntouched();
     this.modalAberto = true;
   }
 
@@ -123,6 +145,8 @@ export class TransacoesPage {
       categoriaId: transacao.categoriaId ?? null,
       contaId: transacao.contaId ?? null
     });
+    this.transacaoForm.markAsPristine();
+    this.transacaoForm.markAsUntouched();
     this.modalAberto = true;
   }
 
@@ -130,15 +154,33 @@ export class TransacoesPage {
     this.modalAberto = false;
   }
 
+  /** Fecha o painel; se houver dados digitados, pede confirmação antes de descartar. */
+  async tentarFechar() {
+    if (!this.transacaoForm.dirty) {
+      this.fecharModal();
+      return;
+    }
+    const alert = await this.alertController.create({
+      header: 'Descartar alterações?',
+      message: 'Os dados preenchidos serão perdidos.',
+      buttons: [
+        { text: 'Continuar editando', role: 'cancel' },
+        { text: 'Descartar', role: 'destructive', handler: () => this.fecharModal() }
+      ]
+    });
+    await alert.present();
+  }
+
   @HostListener('document:keydown.escape')
   onEsc() {
     if (this.modalAberto) {
-      this.fecharModal();
+      this.tentarFechar();
     }
   }
 
   async salvar() {
     if (this.transacaoForm.invalid) {
+      this.transacaoForm.markAllAsTouched();
       this.mostrarToast('Preencha os campos obrigatórios');
       return;
     }
@@ -168,6 +210,16 @@ export class TransacoesPage {
         this.mostrarToast(erro?.error?.message || 'Erro ao salvar transação');
       }
     });
+  }
+
+  /** Exclusão a partir do painel de edição (alternativa ao gesto de arrastar). */
+  async excluirEditando() {
+    const transacao = this.transacoes.find(t => t.id === this.editandoId);
+    if (!transacao) {
+      return;
+    }
+    this.fecharModal();
+    await this.confirmarExclusao(transacao);
   }
 
   async confirmarExclusao(transacao: Transacao) {

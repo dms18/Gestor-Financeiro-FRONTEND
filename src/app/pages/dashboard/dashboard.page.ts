@@ -14,6 +14,7 @@ import { Usuario } from '../../models/usuario';
 export class DashboardPage {
   usuario: Usuario | null = null;
   filtroTipoPessoa: '' | TipoPessoa = '';
+  periodo: 'mes' | 'anterior' | 'tudo' = 'mes';
 
   resumo: ResumoFinanceiro = {
     totalReceitas: 0,
@@ -61,7 +62,8 @@ export class DashboardPage {
     this.carregando = true;
     const tipoPessoa = this.filtroTipoPessoa || undefined;
 
-    this.transacaoService.obterResumo(tipoPessoa).subscribe({
+    const ref = this.referenciaPeriodo();
+    this.transacaoService.obterResumo(tipoPessoa, ref?.mes, ref?.ano).subscribe({
       next: (resumo) => {
         this.resumo = resumo || this.resumo;
       },
@@ -90,6 +92,27 @@ export class DashboardPage {
       next: (alertas) => (this.alertasAtivos = alertas || []),
       error: () => (this.alertasAtivos = [])
     });
+  }
+
+  /** Mês/ano do período escolhido; null = todo o histórico. */
+  private referenciaPeriodo(): { mes: number; ano: number } | null {
+    if (this.periodo === 'tudo') {
+      return null;
+    }
+    const data = new Date();
+    if (this.periodo === 'anterior') {
+      data.setDate(1);
+      data.setMonth(data.getMonth() - 1);
+    }
+    return { mes: data.getMonth() + 1, ano: data.getFullYear() };
+  }
+
+  get rotuloPeriodo(): string {
+    const ref = this.referenciaPeriodo();
+    if (!ref) {
+      return 'todo o período';
+    }
+    return new Date(ref.ano, ref.mes - 1, 1).toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' });
   }
 
   get percentualReceitas(): number {

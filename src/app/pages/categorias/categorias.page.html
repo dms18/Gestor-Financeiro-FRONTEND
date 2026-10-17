@@ -1,0 +1,104 @@
+<ion-header [translucent]="true">
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/tabs/perfil" text="Voltar"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Categorias</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  <ion-refresher slot="fixed" (ionRefresh)="carregarCategorias($event)">
+    <ion-refresher-content></ion-refresher-content>
+  </ion-refresher>
+
+  <ion-list *ngIf="carregando && categorias.length === 0" aria-busy="true" aria-label="Carregando">
+    <ion-item *ngFor="let _ of [1, 2, 3]" lines="none">
+      <ion-label>
+        <h3><ion-skeleton-text style="width: 50%"></ion-skeleton-text></h3>
+      </ion-label>
+    </ion-item>
+  </ion-list>
+
+  <div *ngIf="!carregando && categorias.length === 0" class="ion-padding ion-text-center empty-state">
+    <ion-icon name="pricetags-outline" aria-hidden="true"></ion-icon>
+    <p>Você ainda não tem categorias.</p>
+    <p class="dica">Categorias ajudam a entender de onde vem e para onde vai o seu dinheiro.</p>
+    <ion-button (click)="adicionarSugeridas()">Adicionar categorias sugeridas</ion-button>
+    <ion-button fill="clear" (click)="abrirModalNova()">Criar a minha</ion-button>
+  </div>
+
+  <ion-list *ngIf="receitas.length > 0">
+    <ion-list-header><ion-label>Receitas</ion-label></ion-list-header>
+    <ion-item *ngFor="let c of receitas" button detail="false" (click)="abrirModalEditar(c)">
+      <span slot="start" class="cor-dot" [style.background]="c.cor" aria-hidden="true"></span>
+      <ion-label>{{ c.nome }}</ion-label>
+      <ion-icon slot="end" name="create-outline" color="medium" aria-hidden="true"></ion-icon>
+    </ion-item>
+  </ion-list>
+
+  <ion-list *ngIf="despesas.length > 0">
+    <ion-list-header><ion-label>Despesas</ion-label></ion-list-header>
+    <ion-item *ngFor="let c of despesas" button detail="false" (click)="abrirModalEditar(c)">
+      <span slot="start" class="cor-dot" [style.background]="c.cor" aria-hidden="true"></span>
+      <ion-label>{{ c.nome }}</ion-label>
+      <ion-icon slot="end" name="create-outline" color="medium" aria-hidden="true"></ion-icon>
+    </ion-item>
+  </ion-list>
+
+  <ion-fab *ngIf="!modalAberto" vertical="bottom" horizontal="end" slot="fixed">
+    <ion-fab-button color="primary" (click)="abrirModalNova()" aria-label="Nova categoria">
+      <ion-icon name="add" aria-hidden="true"></ion-icon>
+    </ion-fab-button>
+  </ion-fab>
+
+  <div class="form-overlay" *ngIf="modalAberto" (click)="tentarFechar()">
+    <div class="form-painel" appModalA11y role="dialog" aria-modal="true" aria-labelledby="titulo-modal" (click)="$event.stopPropagation()">
+      <ion-toolbar color="primary">
+        <ion-title id="titulo-modal">{{ editandoId ? 'Editar' : 'Nova' }} Categoria</ion-title>
+        <ion-buttons slot="end">
+          <ion-button (click)="tentarFechar()">Fechar</ion-button>
+        </ion-buttons>
+      </ion-toolbar>
+
+      <div class="form-conteudo">
+        <form [formGroup]="categoriaForm" (ngSubmit)="salvar()" novalidate>
+          <ion-list>
+            <ion-item>
+              <ion-label position="stacked">Nome *</ion-label>
+              <ion-input formControlName="nome" maxlength="60" placeholder="Ex: Fornecedores"></ion-input>
+            </ion-item>
+            <app-campo-erro [control]="categoriaForm.get('nome')"></app-campo-erro>
+
+            <ion-item>
+              <ion-label position="stacked">Tipo *</ion-label>
+              <ion-select formControlName="tipo" interface="alert" cancelText="Cancelar" okText="OK">
+                <ion-select-option value="RECEITA">Receita</ion-select-option>
+                <ion-select-option value="DESPESA">Despesa</ion-select-option>
+              </ion-select>
+            </ion-item>
+          </ion-list>
+
+          <fieldset class="cores">
+            <legend>Cor</legend>
+            <button
+              type="button"
+              *ngFor="let cor of cores"
+              class="cor-opcao"
+              [class.selecionada]="categoriaForm.value.cor === cor"
+              [style.background]="cor"
+              [attr.aria-label]="'Cor ' + cor"
+              [attr.aria-pressed]="categoriaForm.value.cor === cor"
+              (click)="escolherCor(cor)"
+            ></button>
+          </fieldset>
+
+          <ion-button expand="block" class="ion-margin-top" type="submit">Salvar</ion-button>
+          <ion-button *ngIf="editandoId" expand="block" fill="outline" color="danger" type="button" (click)="excluirEditando()">
+            Excluir categoria
+          </ion-button>
+        </form>
+      </div>
+    </div>
+  </div>
+</ion-content>

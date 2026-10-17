@@ -90,6 +90,8 @@ export class InvestimentosPage {
       status: this.filtroStatus,
       prioridade: 'MEDIA'
     });
+    this.investimentoForm.markAsPristine();
+    this.investimentoForm.markAsUntouched();
     this.modalAberto = true;
   }
 
@@ -103,6 +105,8 @@ export class InvestimentosPage {
       status: investimento.status,
       prioridade: investimento.prioridade
     });
+    this.investimentoForm.markAsPristine();
+    this.investimentoForm.markAsUntouched();
     this.modalAberto = true;
   }
 
@@ -110,15 +114,33 @@ export class InvestimentosPage {
     this.modalAberto = false;
   }
 
+  /** Fecha o painel; se houver dados digitados, pede confirmação antes de descartar. */
+  async tentarFechar() {
+    if (!this.investimentoForm.dirty) {
+      this.fecharModal();
+      return;
+    }
+    const alert = await this.alertController.create({
+      header: 'Descartar alterações?',
+      message: 'Os dados preenchidos serão perdidos.',
+      buttons: [
+        { text: 'Continuar editando', role: 'cancel' },
+        { text: 'Descartar', role: 'destructive', handler: () => this.fecharModal() }
+      ]
+    });
+    await alert.present();
+  }
+
   @HostListener('document:keydown.escape')
   onEsc() {
     if (this.modalAberto) {
-      this.fecharModal();
+      this.tentarFechar();
     }
   }
 
   async salvar() {
     if (this.investimentoForm.invalid) {
+      this.investimentoForm.markAllAsTouched();
       this.mostrarToast('Preencha os campos obrigatórios');
       return;
     }

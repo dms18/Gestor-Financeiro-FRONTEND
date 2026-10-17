@@ -8,10 +8,10 @@
         <ion-label>Todas</ion-label>
       </ion-segment-button>
       <ion-segment-button value="PF">
-        <ion-label>PF</ion-label>
+        <ion-label><span aria-hidden="true">PF</span><span class="sr-only">Pessoa física</span></ion-label>
       </ion-segment-button>
       <ion-segment-button value="PJ">
-        <ion-label>PJ</ion-label>
+        <ion-label><span aria-hidden="true">PJ</span><span class="sr-only">Pessoa jurídica</span></ion-label>
       </ion-segment-button>
     </ion-segment>
   </ion-toolbar>
@@ -23,10 +23,19 @@
   </ion-refresher>
 
   <div *ngIf="!carregando && transacoes.length === 0" class="ion-padding ion-text-center empty-state">
-    <ion-icon name="receipt-outline"></ion-icon>
+    <ion-icon name="receipt-outline" aria-hidden="true"></ion-icon>
     <p>Nenhuma transação cadastrada.</p>
     <ion-button fill="clear" (click)="abrirModalNova()">Adicionar primeira transação</ion-button>
   </div>
+
+  <ion-list *ngIf="carregando && transacoes.length === 0" aria-busy="true" aria-label="Carregando">
+    <ion-item *ngFor="let _ of [1, 2, 3]" lines="none">
+      <ion-label>
+        <h3><ion-skeleton-text style="width: 60%"></ion-skeleton-text></h3>
+        <p><ion-skeleton-text style="width: 40%"></ion-skeleton-text></p>
+      </ion-label>
+    </ion-item>
+  </ion-list>
 
   <ion-list>
     <ion-item-sliding *ngFor="let t of transacoes">
@@ -35,9 +44,10 @@
           slot="start"
           [name]="t.tipo === 'RECEITA' ? 'arrow-up-circle' : 'arrow-down-circle'"
           [color]="t.tipo === 'RECEITA' ? 'success' : 'danger'"
+          aria-hidden="true"
         ></ion-icon>
         <ion-label>
-          <h2>{{ t.descricao }}</h2>
+          <h2><span class="sr-only">{{ t.tipo === 'RECEITA' ? 'Receita: ' : 'Despesa: ' }}</span>{{ t.descricao }}</h2>
           <p>{{ nomeCategoria(t.categoriaId) }} • {{ nomeConta(t.contaId) }}</p>
           <p>{{ t.data | date:'dd/MM/yyyy' }} • {{ t.tipoPessoa }}</p>
         </ion-label>
@@ -54,18 +64,18 @@
     </ion-item-sliding>
   </ion-list>
 
-  <ion-fab vertical="bottom" horizontal="end" slot="fixed">
+  <ion-fab *ngIf="!modalAberto" vertical="bottom" horizontal="end" slot="fixed">
     <ion-fab-button color="primary" (click)="abrirModalNova()" aria-label="Nova transação">
       <ion-icon name="add" aria-hidden="true"></ion-icon>
     </ion-fab-button>
   </ion-fab>
 
-  <div class="form-overlay" *ngIf="modalAberto" (click)="fecharModal()">
-    <div class="form-painel" (click)="$event.stopPropagation()">
+  <div class="form-overlay" *ngIf="modalAberto" (click)="tentarFechar()">
+    <div class="form-painel" appModalA11y role="dialog" aria-modal="true" aria-labelledby="titulo-modal" (click)="$event.stopPropagation()">
       <ion-toolbar color="primary">
-        <ion-title>{{ editandoId ? 'Editar' : 'Nova' }} Transação</ion-title>
+        <ion-title id="titulo-modal">{{ editandoId ? 'Editar' : 'Nova' }} Transação</ion-title>
         <ion-buttons slot="end">
-          <ion-button (click)="fecharModal()">Fechar</ion-button>
+          <ion-button (click)="tentarFechar()">Fechar</ion-button>
         </ion-buttons>
       </ion-toolbar>
 
@@ -76,20 +86,26 @@
               <ion-label position="stacked">Descrição *</ion-label>
               <ion-input formControlName="descricao" placeholder="Ex: Venda de produtos"></ion-input>
             </ion-item>
+            <app-campo-erro [control]="transacaoForm.get('descricao')"></app-campo-erro>
 
             <ion-item>
               <ion-label position="stacked">Valor *</ion-label>
               <ion-input type="number" formControlName="valor" placeholder="0,00"></ion-input>
             </ion-item>
+            <app-campo-erro [control]="transacaoForm.get('valor')"></app-campo-erro>
 
             <ion-item>
               <ion-label position="stacked">Data *</ion-label>
-              <ion-datetime formControlName="data" displayFormat="DD/MM/YYYY"></ion-datetime>
+              <ion-datetime formControlName="data" displayFormat="DD/MM/YYYY" cancelText="Cancelar" doneText="OK"
+                monthNames="janeiro,fevereiro,março,abril,maio,junho,julho,agosto,setembro,outubro,novembro,dezembro"
+                monthShortNames="jan,fev,mar,abr,mai,jun,jul,ago,set,out,nov,dez"
+                dayNames="domingo,segunda-feira,terça-feira,quarta-feira,quinta-feira,sexta-feira,sábado"
+                dayShortNames="dom,seg,ter,qua,qui,sex,sáb"></ion-datetime>
             </ion-item>
 
             <ion-item>
               <ion-label position="stacked">Tipo *</ion-label>
-              <ion-select formControlName="tipo" interface="alert">
+              <ion-select cancelText="Cancelar" okText="OK" formControlName="tipo" interface="alert">
                 <ion-select-option value="RECEITA">Receita</ion-select-option>
                 <ion-select-option value="DESPESA">Despesa</ion-select-option>
               </ion-select>
@@ -97,7 +113,7 @@
 
             <ion-item>
               <ion-label position="stacked">Pessoa *</ion-label>
-              <ion-select formControlName="tipoPessoa" interface="alert">
+              <ion-select cancelText="Cancelar" okText="OK" formControlName="tipoPessoa" interface="alert">
                 <ion-select-option value="PF">Pessoa Física</ion-select-option>
                 <ion-select-option value="PJ">Pessoa Jurídica</ion-select-option>
               </ion-select>
@@ -105,21 +121,28 @@
 
             <ion-item>
               <ion-label position="stacked">Categoria</ion-label>
-              <ion-select formControlName="categoriaId" interface="alert" placeholder="Selecione">
-                <ion-select-option *ngFor="let c of categorias" [value]="c.id">{{ c.nome }}</ion-select-option>
+              <ion-select cancelText="Cancelar" okText="OK" formControlName="categoriaId" interface="alert" placeholder="Selecione">
+                <ion-select-option *ngFor="let c of categoriasDoTipo" [value]="c.id">{{ c.nome }}</ion-select-option>
               </ion-select>
             </ion-item>
+            <ion-note *ngIf="categoriasDoTipo.length === 0" class="dica-categoria">
+              Nenhuma categoria de {{ transacaoForm.value.tipo === 'RECEITA' ? 'receita' : 'despesa' }} cadastrada.
+              <a href="javascript:void(0)" (click)="irParaCategorias()">Criar categorias</a>
+            </ion-note>
 
             <ion-item>
               <ion-label position="stacked">Conta</ion-label>
-              <ion-select formControlName="contaId" interface="alert" placeholder="Selecione">
+              <ion-select cancelText="Cancelar" okText="OK" formControlName="contaId" interface="alert" placeholder="Selecione">
                 <ion-select-option *ngFor="let conta of contas" [value]="conta.id">{{ conta.nome }}</ion-select-option>
               </ion-select>
             </ion-item>
           </ion-list>
 
-          <ion-button expand="block" class="ion-margin-top" (click)="salvar()" [disabled]="transacaoForm.invalid">
+          <ion-button expand="block" class="ion-margin-top" (click)="salvar()">
             Salvar
+          </ion-button>
+          <ion-button *ngIf="editandoId" expand="block" fill="outline" color="danger" type="button" (click)="excluirEditando()">
+            Excluir transação
           </ion-button>
         </form>
       </div>

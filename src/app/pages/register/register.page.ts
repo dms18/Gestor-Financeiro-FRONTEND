@@ -12,6 +12,7 @@ import { ToastController, LoadingController } from '@ionic/angular';
 export class RegisterPage implements OnInit {
   registerForm: FormGroup;
   loading = false;
+  mostrarSenha = false;
 
   constructor(
     private fb: FormBuilder,
@@ -42,6 +43,7 @@ export class RegisterPage implements OnInit {
 
   async registrar() {
     if (this.registerForm.invalid) {
+      this.registerForm.markAllAsTouched();
       if (this.registerForm.get('aceiteTermos')?.invalid) {
         this.mostrarToast('É necessário aceitar os Termos de Uso e a Política de Privacidade');
       } else {

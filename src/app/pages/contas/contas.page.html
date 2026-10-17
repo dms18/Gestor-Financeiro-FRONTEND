@@ -8,10 +8,10 @@
         <ion-label>Todas</ion-label>
       </ion-segment-button>
       <ion-segment-button value="PF">
-        <ion-label>PF</ion-label>
+        <ion-label><span aria-hidden="true">PF</span><span class="sr-only">Pessoa física</span></ion-label>
       </ion-segment-button>
       <ion-segment-button value="PJ">
-        <ion-label>PJ</ion-label>
+        <ion-label><span aria-hidden="true">PJ</span><span class="sr-only">Pessoa jurídica</span></ion-label>
       </ion-segment-button>
     </ion-segment>
   </ion-toolbar>
@@ -23,23 +23,33 @@
   </ion-refresher>
 
   <div *ngIf="!carregando && contasFiltradas.length === 0" class="ion-padding ion-text-center empty-state">
-    <ion-icon name="card-outline"></ion-icon>
+    <ion-icon name="card-outline" aria-hidden="true"></ion-icon>
     <p>Nenhuma conta cadastrada.</p>
     <ion-button fill="clear" (click)="abrirModalNova()">Cadastrar primeira conta</ion-button>
   </div>
 
+  <ion-list *ngIf="carregando && contas.length === 0" aria-busy="true" aria-label="Carregando">
+    <ion-item *ngFor="let _ of [1, 2, 3]" lines="none">
+      <ion-label>
+        <h3><ion-skeleton-text style="width: 60%"></ion-skeleton-text></h3>
+        <p><ion-skeleton-text style="width: 40%"></ion-skeleton-text></p>
+      </ion-label>
+    </ion-item>
+  </ion-list>
+
   <ion-list>
     <ion-item-sliding *ngFor="let c of contasFiltradas">
       <ion-item button (click)="abrirModalEditar(c)">
-        <ion-icon slot="start" name="business-outline" color="primary"></ion-icon>
+        <ion-icon slot="start" name="business-outline" color="primary" aria-hidden="true"></ion-icon>
         <ion-label>
           <h2>{{ c.nome }}</h2>
           <p *ngIf="c.instituicao">{{ c.instituicao }}</p>
           <p *ngIf="c.numeroConta">Conta: {{ c.numeroConta }}</p>
-          <p>{{ rotuloTipo(c.tipo) }} • {{ c.tipoPessoa }}</p>
+          <p>{{ rotuloTipo(c.tipo) }} • {{ c.tipoPessoa }} • inicial {{ c.saldo | currency:'BRL':'symbol':'1.2-2' }}</p>
         </ion-label>
-        <ion-text slot="end">
-          <strong>{{ c.saldo | currency:'BRL':'symbol':'1.2-2' }}</strong>
+        <ion-text slot="end" class="saldo-conta">
+          <strong>{{ saldoAtual(c) | currency:'BRL':'symbol':'1.2-2' }}</strong>
+          <small>Saldo atual</small>
         </ion-text>
       </ion-item>
 
@@ -51,18 +61,18 @@
     </ion-item-sliding>
   </ion-list>
 
-  <ion-fab vertical="bottom" horizontal="end" slot="fixed">
+  <ion-fab *ngIf="!modalAberto" vertical="bottom" horizontal="end" slot="fixed">
     <ion-fab-button color="primary" (click)="abrirModalNova()" aria-label="Nova conta">
       <ion-icon name="add" aria-hidden="true"></ion-icon>
     </ion-fab-button>
   </ion-fab>
 
-  <div class="form-overlay" *ngIf="modalAberto" (click)="fecharModal()">
-    <div class="form-painel" (click)="$event.stopPropagation()">
+  <div class="form-overlay" *ngIf="modalAberto" (click)="tentarFechar()">
+    <div class="form-painel" appModalA11y role="dialog" aria-modal="true" aria-labelledby="titulo-modal" (click)="$event.stopPropagation()">
       <ion-toolbar color="primary">
-        <ion-title>{{ editandoId ? 'Editar' : 'Nova' }} Conta</ion-title>
+        <ion-title id="titulo-modal">{{ editandoId ? 'Editar' : 'Nova' }} Conta</ion-title>
         <ion-buttons slot="end">
-          <ion-button (click)="fecharModal()">Fechar</ion-button>
+          <ion-button (click)="tentarFechar()">Fechar</ion-button>
         </ion-buttons>
       </ion-toolbar>
 
@@ -73,6 +83,7 @@
               <ion-label position="stacked">Nome da conta *</ion-label>
               <ion-input formControlName="nome" placeholder="Ex: Conta principal"></ion-input>
             </ion-item>
+            <app-campo-erro [control]="contaForm.get('nome')"></app-campo-erro>
 
             <ion-item>
               <ion-label position="stacked">Instituição financeira</ion-label>
@@ -86,7 +97,7 @@
 
             <ion-item>
               <ion-label position="stacked">Tipo *</ion-label>
-              <ion-select formControlName="tipo" interface="alert">
+              <ion-select cancelText="Cancelar" okText="OK" formControlName="tipo" interface="alert">
                 <ion-select-option value="CORRENTE">Conta Corrente</ion-select-option>
                 <ion-select-option value="POUPANCA">Poupança</ion-select-option>
                 <ion-select-option value="CAIXA">Caixa</ion-select-option>
@@ -97,18 +108,22 @@
               <ion-label position="stacked">Saldo inicial *</ion-label>
               <ion-input type="number" formControlName="saldo" placeholder="0,00"></ion-input>
             </ion-item>
+            <app-campo-erro [control]="contaForm.get('saldo')"></app-campo-erro>
 
             <ion-item>
               <ion-label position="stacked">Vínculo *</ion-label>
-              <ion-select formControlName="tipoPessoa" interface="alert">
+              <ion-select cancelText="Cancelar" okText="OK" formControlName="tipoPessoa" interface="alert">
                 <ion-select-option value="PF">Pessoa Física</ion-select-option>
                 <ion-select-option value="PJ">Pessoa Jurídica</ion-select-option>
               </ion-select>
             </ion-item>
           </ion-list>
 
-          <ion-button expand="block" class="ion-margin-top" (click)="salvar()" [disabled]="contaForm.invalid">
+          <ion-button expand="block" class="ion-margin-top" (click)="salvar()">
             Salvar
+          </ion-button>
+          <ion-button *ngIf="editandoId" expand="block" fill="outline" color="danger" type="button" (click)="excluirEditando()">
+            Excluir conta
           </ion-button>
         </form>
       </div>

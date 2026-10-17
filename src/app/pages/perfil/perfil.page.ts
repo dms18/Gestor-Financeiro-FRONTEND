@@ -207,9 +207,9 @@ export class PerfilPage {
         this.usuario = usuario;
         this.mostrarToast('Perfil atualizado com sucesso');
       },
-      error: () => {
+      error: (erro) => {
         loading.dismiss();
-        this.mostrarToast('Erro ao atualizar perfil');
+        this.mostrarToast(erro?.error?.message || 'Erro ao atualizar perfil');
       }
     });
   }

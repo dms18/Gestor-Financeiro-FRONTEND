@@ -17,16 +17,25 @@
   </ion-refresher>
 
   <div *ngIf="!carregando && filtrados.length === 0" class="ion-padding ion-text-center empty-state">
-    <ion-icon name="bulb-outline"></ion-icon>
+    <ion-icon name="bulb-outline" aria-hidden="true"></ion-icon>
     <p>Nenhum investimento nesta categoria.</p>
     <ion-button fill="clear" (click)="abrirModalNovo()">Adicionar ideia</ion-button>
   </div>
+
+  <ion-list *ngIf="carregando && todos.length === 0" aria-busy="true" aria-label="Carregando">
+    <ion-item *ngFor="let _ of [1, 2, 3]" lines="none">
+      <ion-label>
+        <h3><ion-skeleton-text style="width: 60%"></ion-skeleton-text></h3>
+        <p><ion-skeleton-text style="width: 40%"></ion-skeleton-text></p>
+      </ion-label>
+    </ion-item>
+  </ion-list>
 
   <ion-card *ngFor="let inv of filtrados">
     <ion-card-header>
       <div class="card-top">
         <ion-card-title>{{ inv.titulo }}</ion-card-title>
-        <ion-badge [color]="corPrioridade(inv.prioridade)">{{ inv.prioridade }}</ion-badge>
+        <ion-badge [color]="corPrioridade(inv.prioridade)">{{ inv.prioridade | rotuloEnum }}</ion-badge>
       </div>
     </ion-card-header>
 
@@ -45,30 +54,30 @@
       </div>
 
       <div class="acoes">
-        <ion-button fill="clear" size="small" (click)="abrirModalEditar(inv)">
-          <ion-icon slot="start" name="create-outline"></ion-icon>
+        <ion-button fill="clear" (click)="abrirModalEditar(inv)">
+          <ion-icon slot="start" name="create-outline" aria-hidden="true"></ion-icon>
           Editar
         </ion-button>
-        <ion-button fill="clear" size="small" color="danger" (click)="confirmarExclusao(inv)">
-          <ion-icon slot="start" name="trash-outline"></ion-icon>
+        <ion-button fill="clear" color="danger" (click)="confirmarExclusao(inv)">
+          <ion-icon slot="start" name="trash-outline" aria-hidden="true"></ion-icon>
           Excluir
         </ion-button>
       </div>
     </ion-card-content>
   </ion-card>
 
-  <ion-fab vertical="bottom" horizontal="end" slot="fixed">
+  <ion-fab *ngIf="!modalAberto" vertical="bottom" horizontal="end" slot="fixed">
     <ion-fab-button color="primary" (click)="abrirModalNovo()" aria-label="Novo investimento">
       <ion-icon name="add" aria-hidden="true"></ion-icon>
     </ion-fab-button>
   </ion-fab>
 
-  <div class="form-overlay" *ngIf="modalAberto" (click)="fecharModal()">
-    <div class="form-painel" (click)="$event.stopPropagation()">
+  <div class="form-overlay" *ngIf="modalAberto" (click)="tentarFechar()">
+    <div class="form-painel" appModalA11y role="dialog" aria-modal="true" aria-labelledby="titulo-modal" (click)="$event.stopPropagation()">
       <ion-toolbar color="primary">
-        <ion-title>{{ editandoId ? 'Editar' : 'Novo' }} Investimento</ion-title>
+        <ion-title id="titulo-modal">{{ editandoId ? 'Editar' : 'Novo' }} Investimento</ion-title>
         <ion-buttons slot="end">
-          <ion-button (click)="fecharModal()">Fechar</ion-button>
+          <ion-button (click)="tentarFechar()">Fechar</ion-button>
         </ion-buttons>
       </ion-toolbar>
 
@@ -79,6 +88,7 @@
               <ion-label position="stacked">Título *</ion-label>
               <ion-input formControlName="titulo" placeholder="Ex: Compra de equipamento"></ion-input>
             </ion-item>
+            <app-campo-erro [control]="investimentoForm.get('titulo')"></app-campo-erro>
 
             <ion-item>
               <ion-label position="stacked">Descrição</ion-label>
@@ -97,7 +107,7 @@
 
             <ion-item>
               <ion-label position="stacked">Status *</ion-label>
-              <ion-select formControlName="status" interface="alert">
+              <ion-select cancelText="Cancelar" okText="OK" formControlName="status" interface="alert">
                 <ion-select-option value="IDEIA">Ideia</ion-select-option>
                 <ion-select-option value="EM_ANALISE">Em Análise</ion-select-option>
                 <ion-select-option value="APROVADO">Aprovado</ion-select-option>
@@ -107,7 +117,7 @@
 
             <ion-item>
               <ion-label position="stacked">Prioridade *</ion-label>
-              <ion-select formControlName="prioridade" interface="alert">
+              <ion-select cancelText="Cancelar" okText="OK" formControlName="prioridade" interface="alert">
                 <ion-select-option value="BAIXA">Baixa</ion-select-option>
                 <ion-select-option value="MEDIA">Média</ion-select-option>
                 <ion-select-option value="ALTA">Alta</ion-select-option>
@@ -115,7 +125,7 @@
             </ion-item>
           </ion-list>
 
-          <ion-button expand="block" class="ion-margin-top" (click)="salvar()" [disabled]="investimentoForm.invalid">
+          <ion-button expand="block" class="ion-margin-top" (click)="salvar()">
             Salvar
           </ion-button>
         </form>

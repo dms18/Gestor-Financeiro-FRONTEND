@@ -16,7 +16,9 @@ export class ErrorInterceptor implements HttpInterceptor {
           this.authService.logout();
           this.router.navigate(['/login']);
         }
-        return throwError(() => error);
+        // RxJS 6: throwError recebe o erro diretamente (a forma com factory só existe no RxJS 7,
+        // e aqui entregaria a função em vez do HttpErrorResponse, escondendo a mensagem do servidor).
+        return throwError(error);
       })
     );
   }

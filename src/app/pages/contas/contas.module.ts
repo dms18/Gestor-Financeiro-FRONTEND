@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 import { IonicModule } from '@ionic/angular';
+import { SharedModule } from '../../shared/shared.module';
 
 import { ContasPageRoutingModule } from './contas-routing.module';
 
@@ -14,6 +15,7 @@ import { ContasPage } from './contas.page';
     FormsModule,
     ReactiveFormsModule,
     IonicModule,
+    SharedModule,
     ContasPageRoutingModule
   ],
   declarations: [ContasPage]
