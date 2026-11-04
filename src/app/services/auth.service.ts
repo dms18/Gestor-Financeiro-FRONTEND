@@ -31,6 +31,14 @@ export class AuthService {
     );
   }
 
+  solicitarCodigo(email: string): Observable<{ message: string }> {
+    return this.http.post<{ message: string }>(`${this.apiUrl}/esqueci-senha`, { email });
+  }
+
+  redefinirSenha(request: { email: string; codigo: string; novaSenha: string }): Observable<{ message: string }> {
+    return this.http.post<{ message: string }>(`${this.apiUrl}/redefinir-senha`, request);
+  }
+
   private salvarToken(response: LoginResponse): void {
     localStorage.setItem('auth_token', response.token);
     localStorage.setItem('usuario', JSON.stringify(response.usuario));

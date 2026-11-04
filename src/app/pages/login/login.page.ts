@@ -63,6 +63,10 @@ export class LoginPage implements OnInit {
     await toast.present();
   }
 
+  irParaEsqueciSenha() {
+    this.router.navigate(['/esqueci-senha']);
+  }
+
   irParaCadastro() {
     this.router.navigate(['/register']);
   }

@@ -1,0 +1,62 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/esqueci-senha" text="" aria-label="Voltar"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Redefinir senha</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <div class="container">
+    <div class="intro">
+      <ion-icon name="key-outline" color="primary" aria-hidden="true"></ion-icon>
+      <h1>Digite o código</h1>
+      <p>Informe o código de 6 dígitos enviado ao seu e-mail e escolha uma nova senha.</p>
+    </div>
+
+    <form [formGroup]="form" (ngSubmit)="redefinir()" novalidate>
+      <ion-item>
+        <ion-label position="stacked">E-mail</ion-label>
+        <ion-input type="email" formControlName="email" inputmode="email" autocomplete="username"></ion-input>
+      </ion-item>
+      <app-campo-erro [control]="form.get('email')"></app-campo-erro>
+
+      <ion-item>
+        <ion-label position="stacked">Código</ion-label>
+        <ion-input type="text" formControlName="codigo" inputmode="numeric" maxlength="6"
+          autocomplete="one-time-code" placeholder="000000"></ion-input>
+      </ion-item>
+      <app-campo-erro [control]="form.get('codigo')"></app-campo-erro>
+
+      <ion-item>
+        <ion-label position="stacked">Nova senha</ion-label>
+        <ion-input [type]="mostrarSenha ? 'text' : 'password'" formControlName="novaSenha" autocomplete="new-password"></ion-input>
+        <ion-button slot="end" fill="clear" class="btn-olho" type="button" (click)="mostrarSenha = !mostrarSenha"
+          [attr.aria-label]="mostrarSenha ? 'Ocultar senha' : 'Mostrar senha'" [attr.aria-pressed]="mostrarSenha">
+          <ion-icon slot="icon-only" [name]="mostrarSenha ? 'eye-off-outline' : 'eye-outline'" aria-hidden="true"></ion-icon>
+        </ion-button>
+      </ion-item>
+      <app-campo-erro [control]="form.get('novaSenha')"></app-campo-erro>
+
+      <ion-item>
+        <ion-label position="stacked">Confirmar nova senha</ion-label>
+        <ion-input [type]="mostrarSenha ? 'text' : 'password'" formControlName="confirmacaoSenha" autocomplete="new-password"></ion-input>
+      </ion-item>
+      <div class="erro-grupo" role="alert"
+        *ngIf="form.hasError('senhasNaoIguais') && form.get('confirmacaoSenha')?.touched">
+        As senhas não conferem
+      </div>
+
+      <ion-button expand="block" color="primary" type="submit" class="btn-principal" [disabled]="loading">
+        <ion-spinner *ngIf="loading" name="dots" aria-hidden="true"></ion-spinner>
+        <span aria-live="polite">{{ loading ? 'Salvando...' : 'Redefinir senha' }}</span>
+      </ion-button>
+    </form>
+
+    <div class="voltar-link">
+      <p>Não recebeu o código?</p>
+      <ion-button fill="clear" color="primary" (click)="reenviar()" [disabled]="loading">Reenviar código</ion-button>
+    </div>
+  </div>
+</ion-content>

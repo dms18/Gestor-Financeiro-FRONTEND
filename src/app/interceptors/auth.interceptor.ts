@@ -8,7 +8,8 @@ export class AuthInterceptor implements HttpInterceptor {
   constructor(private authService: AuthService) {}
 
   intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
-    const isAuthRoute = req.url.includes('/auth/login') || req.url.includes('/auth/register');
+    const isAuthRoute = req.url.includes('/auth/login') || req.url.includes('/auth/register')
+      || req.url.includes('/auth/esqueci-senha') || req.url.includes('/auth/redefinir-senha');
     const token = this.authService.getToken();
 
     if (token && !isAuthRoute) {

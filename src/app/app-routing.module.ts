@@ -12,6 +12,14 @@ const routes: Routes = [
     loadChildren: () => import('./pages/register/register.module').then(m => m.RegisterPageModule)
   },
   {
+    path: 'esqueci-senha',
+    loadChildren: () => import('./pages/esqueci-senha/esqueci-senha.module').then(m => m.EsqueciSenhaPageModule)
+  },
+  {
+    path: 'redefinir-senha',
+    loadChildren: () => import('./pages/redefinir-senha/redefinir-senha.module').then(m => m.RedefinirSenhaPageModule)
+  },
+  {
     path: 'termos',
     loadChildren: () => import('./pages/termos/termos.module').then(m => m.TermosPageModule)
   },

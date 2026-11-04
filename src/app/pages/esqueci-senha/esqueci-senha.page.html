@@ -1,0 +1,35 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/login" text="" aria-label="Voltar"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Esqueci minha senha</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <div class="container">
+    <div class="intro">
+      <ion-icon name="mail-outline" color="primary" aria-hidden="true"></ion-icon>
+      <h1>Recuperar senha</h1>
+      <p>Informe o e-mail da sua conta. Enviaremos um código de 6 dígitos para você redefinir a senha.</p>
+    </div>
+
+    <form [formGroup]="form" (ngSubmit)="enviar()" novalidate>
+      <ion-item>
+        <ion-label position="stacked">E-mail</ion-label>
+        <ion-input type="email" formControlName="email" inputmode="email" autocomplete="username" placeholder="seu@email.com"></ion-input>
+      </ion-item>
+      <app-campo-erro [control]="form.get('email')"></app-campo-erro>
+
+      <ion-button expand="block" color="primary" type="submit" class="btn-principal" [disabled]="loading">
+        <ion-spinner *ngIf="loading" name="dots" aria-hidden="true"></ion-spinner>
+        <span aria-live="polite">{{ loading ? 'Enviando...' : 'Enviar código' }}</span>
+      </ion-button>
+    </form>
+
+    <div class="voltar-link">
+      <ion-button fill="clear" color="primary" (click)="voltar()">Voltar ao login</ion-button>
+    </div>
+  </div>
+</ion-content>
