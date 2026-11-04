@@ -1,0 +1,118 @@
+name: Frontend - build e deploy
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+concurrency:
+  group: frontend-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+env:
+  IMAGE_NAME: gestor-web
+
+jobs:
+  build:
+    name: Build Angular
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      # Angular 12 exige Node 16.
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '16'
+          cache: npm
+          cache-dependency-path: package-lock.json
+
+      - run: npm ci --legacy-peer-deps
+
+      - name: Build de produção
+        run: npx ng build --configuration production
+
+  publish:
+    name: Imagem arm64 no GHCR
+    needs: build
+    if: github.event_name != 'pull_request'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    outputs:
+      image: ${{ steps.meta.outputs.image }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Nome da imagem (minúsculas)
+        id: meta
+        run: |
+          owner=$(echo "${{ github.repository_owner }}" | tr '[:upper:]' '[:lower:]')
+          echo "image=ghcr.io/${owner}/${IMAGE_NAME}" >> "$GITHUB_OUTPUT"
+
+      - uses: docker/setup-qemu-action@v3
+        with:
+          platforms: arm64
+
+      - uses: docker/setup-buildx-action@v3
+
+      - uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      # O estágio Node roda na arquitetura do runner (sem emulação); só o nginx final é arm64.
+      - uses: docker/build-push-action@v6
+        with:
+          context: .
+          platforms: linux/arm64
+          build-args: |
+            CONFIGURATION=production
+            GIT_SHA=${{ github.sha }}
+            BUILD_DATE=${{ github.event.head_commit.timestamp }}
+          push: true
+          tags: |
+            ${{ steps.meta.outputs.image }}:latest
+            ${{ steps.meta.outputs.image }}:${{ github.sha }}
+          cache-from: type=gha,scope=frontend
+          cache-to: type=gha,scope=frontend,mode=max
+
+  deploy:
+    name: Deploy no servidor
+    needs: publish
+    runs-on: [self-hosted, gestor]
+    environment: production
+    concurrency: deploy-gestor
+    env:
+      APP_DIR: /opt/gestor
+      IMAGE: ${{ needs.publish.outputs.image }}
+    steps:
+      - name: Login no GHCR
+        run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u "${{ github.actor }}" --password-stdin
+
+      - name: Baixar imagem e apontar a tag local
+        run: |
+          docker pull "$IMAGE:${{ github.sha }}"
+          # O docker-compose.yml do servidor usa gestor-web:latest.
+          docker tag "$IMAGE:${{ github.sha }}" gestor-web:latest
+
+      - name: Subir o web
+        working-directory: ${{ env.APP_DIR }}
+        run: docker compose up -d web
+
+      - name: Verificar se o site responde
+        run: |
+          for i in $(seq 1 12); do
+            code=$(curl -s -o /dev/null -w '%{http_code}' http://localhost/ || true)
+            if [ "$code" = "200" ]; then echo "Site respondeu HTTP 200"; exit 0; fi
+            sleep 5
+          done
+          echo "::error::O site não respondeu HTTP 200 (último: $code)"
+          docker compose -f "$APP_DIR/docker-compose.yml" logs --tail 50 web
+          exit 1
+
+      - name: Limpar imagens antigas
+        if: always()
+        run: docker image prune -f
