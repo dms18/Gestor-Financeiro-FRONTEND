@@ -17,7 +17,7 @@
   </ion-toolbar>
 </ion-header>
 
-<ion-content [fullscreen]="true">
+<ion-content [fullscreen]="true" class="dashboard-conteudo">
   <ion-refresher slot="fixed" (ionRefresh)="carregarDados($event)">
     <ion-refresher-content></ion-refresher-content>
   </ion-refresher>
@@ -71,8 +71,9 @@
     </div>
   </div>
 
+<div class="paineis">
   <!-- Gráfico de barras (CSS puro) -->
-  <ion-card class="ion-margin-horizontal">
+  <ion-card class="ion-margin-horizontal card-painel">
     <ion-card-header>
       <ion-card-title>Receitas vs Despesas</ion-card-title>
     </ion-card-header>
@@ -100,7 +101,7 @@
   </ion-card>
 
   <!-- Alertas sazonais -->
-  <ion-card *ngIf="alertasAtivos.length > 0" class="ion-margin-horizontal">
+  <ion-card *ngIf="alertasAtivos.length > 0" class="ion-margin-horizontal card-painel">
     <ion-card-header>
       <ion-card-title>
         <ion-icon name="notifications" color="warning" aria-hidden="true"></ion-icon>
@@ -116,7 +117,7 @@
   </ion-card>
 
   <!-- Caixa para sazonalidade: aparece da data-alvo até o fim do período -->
-  <ion-card *ngIf="reservas.length > 0" class="ion-margin-horizontal card-reservas">
+  <ion-card *ngIf="reservas.length > 0" class="ion-margin-horizontal card-reservas card-painel">
     <ion-card-header>
       <ion-card-title>
         <ion-icon name="wallet" color="primary" aria-hidden="true"></ion-icon>
@@ -147,6 +148,7 @@
       </div>
     </ion-card-content>
   </ion-card>
+</div>
 
   <!-- Últimas transações -->
   <ion-list-header>

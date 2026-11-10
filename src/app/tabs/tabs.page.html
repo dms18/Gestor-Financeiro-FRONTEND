@@ -1,34 +1,9 @@
 <ion-tabs>
 
   <ion-tab-bar slot="bottom">
-    <ion-tab-button tab="dashboard">
-      <ion-icon name="home"></ion-icon>
-      <ion-label>Dashboard</ion-label>
-    </ion-tab-button>
-
-    <ion-tab-button tab="transacoes">
-      <ion-icon name="swap-vertical"></ion-icon>
-      <ion-label>Transações</ion-label>
-    </ion-tab-button>
-
-    <ion-tab-button tab="contas">
-      <ion-icon name="card"></ion-icon>
-      <ion-label>Contas</ion-label>
-    </ion-tab-button>
-
-    <ion-tab-button tab="sazonalidade">
-      <ion-icon name="analytics"></ion-icon>
-      <ion-label>Sazonalidade</ion-label>
-    </ion-tab-button>
-
-    <ion-tab-button tab="investimentos">
-      <ion-icon name="trending-up"></ion-icon>
-      <ion-label>Investimentos</ion-label>
-    </ion-tab-button>
-
-    <ion-tab-button tab="perfil">
-      <ion-icon name="person"></ion-icon>
-      <ion-label>Perfil</ion-label>
+    <ion-tab-button *ngFor="let aba of abas" [tab]="aba.tab" [layout]="(barraLateral$ | async) ? 'icon-start' : 'icon-top'">
+      <ion-icon [name]="aba.icone"></ion-icon>
+      <ion-label>{{ aba.rotulo }}</ion-label>
     </ion-tab-button>
   </ion-tab-bar>
 

@@ -1,3 +1,10 @@
+// Navegador: formulário de largura confortável no centro (no app continua ocupando a largura da tela)
+body.plataforma-web .login-container {
+  max-width: 440px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
 .login-container {
   display: flex;
   flex-direction: column;

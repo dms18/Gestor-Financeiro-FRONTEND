@@ -332,16 +332,21 @@ body.dark { @include app-dark-colors; @include app-dark-toolbars; }
 
 /*
  * =====================================================================
- * NAVEGADOR DE COMPUTADOR
+ * NAVEGADOR DE COMPUTADOR  (nada aqui vale para o app instalado)
  * ---------------------------------------------------------------------
- * O app é pensado para celular. Em telas largas ele fica numa coluna central (como um celular no meio da
- * tela), com fundo e sombra discretos, em vez de esticar cabeçalho e abas por toda a largura.
- * Os alertas e toasts do Ionic ficam dentro de <ion-app>, então respeitam a mesma largura.
+ * LayoutService adiciona `plataforma-web` ao <body> só quando NÃO é o app nativo, e `web-largo` em
+ * navegador com 1024 px ou mais. Todo o CSS abaixo depende dessas classes: o app instalado e o navegador
+ * estreito (celular) continuam exatamente como antes.
+ *
+ *   768 px ou mais .... app numa coluna central (fundo e sombra discretos)
+ *   1024 px ou mais ... telas com menu: barra lateral + conteúdo largo; Dashboard em 2 colunas
  * =====================================================================
  */
 :root {
   --app-desktop-fundo: #dbe6e5;
   --app-desktop-sombra: 0 0 0 1px rgba(15, 118, 110, 0.12), 0 20px 60px rgba(15, 118, 110, 0.2);
+  --app-lateral-largura: 248px;
+  --app-conteudo-max: 1080px;
 }
 body.dark {
   --app-desktop-fundo: #04070a;
@@ -354,14 +359,147 @@ body.dark {
   }
 }
 
+/* ---- 768 px ou mais, só navegador: coluna central ---- */
 @media (min-width: 768px) {
-  body {
+  body.plataforma-web {
     background: var(--app-desktop-fundo);
   }
 
-  ion-app {
+  body.plataforma-web ion-app {
     max-width: 640px;
     margin: 0 auto;
     box-shadow: var(--app-desktop-sombra);
+  }
+
+  /* Formulários em painel viram janelas centralizadas (no celular continuam como folha de baixo) */
+  body.plataforma-web .form-overlay {
+    align-items: center;
+    padding: 24px;
+  }
+  body.plataforma-web .form-painel {
+    max-width: 560px;
+    max-height: min(100%, 760px);
+    border-radius: var(--app-radius-lg);
+    box-shadow: 0 24px 64px rgba(0, 0, 0, 0.35);
+    animation: form-janela-entrada 0.18s ease;
+  }
+  @keyframes form-janela-entrada {
+    from { opacity: 0; transform: translateY(12px) scale(0.98); }
+    to { opacity: 1; transform: none; }
+  }
+}
+
+/* ---- Mouse: realce ao passar e rolagem discreta (só navegador, com ponteiro de mouse) ---- */
+@media (hover: hover) and (pointer: fine) {
+  body.plataforma-web ion-item {
+    --background-hover: rgba(var(--ion-color-primary-rgb), 0.07);
+    --background-hover-opacity: 1;
+  }
+  body.plataforma-web ion-card {
+    transition: box-shadow 0.15s ease;
+  }
+  body.plataforma-web ion-card:hover {
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.14);
+  }
+  body.plataforma-web * {
+    scrollbar-width: thin;
+    scrollbar-color: rgba(120, 130, 140, 0.45) transparent;
+  }
+  body.plataforma-web ::-webkit-scrollbar { width: 10px; height: 10px; }
+  body.plataforma-web ::-webkit-scrollbar-thumb {
+    background: rgba(120, 130, 140, 0.45);
+    border-radius: 8px;
+    border: 2px solid transparent;
+    background-clip: content-box;
+  }
+}
+
+/* ---- 1024 px ou mais, só navegador, telas COM menu: barra lateral + conteúdo largo ---- */
+@media (min-width: 1024px) {
+  /* ion-app ocupa a tela inteira quando há menu (login e cadastro continuam na coluna central).
+     Sem suporte a :has() o navegador simplesmente mantém a coluna central. */
+  body.web-largo ion-app:has(ion-tabs) {
+    max-width: none;
+    margin: 0;
+    box-shadow: none;
+  }
+
+  /* Menu: de "abas embaixo" para barra lateral à esquerda */
+  body.web-largo ion-tabs {
+    flex-direction: row-reverse;
+  }
+  body.web-largo ion-tab-bar {
+    flex-direction: column;
+    justify-content: flex-start;
+    flex: 0 0 var(--app-lateral-largura);
+    width: var(--app-lateral-largura);
+    height: 100%;
+    padding: 16px 12px;
+    border-top: 0;
+    border-right: 1px solid var(--ion-border-color, rgba(0, 0, 0, 0.12));
+    contain: none;
+    overflow-y: auto;
+    --background: var(--ion-item-background, #fff);
+  }
+  /* Marca no topo da barra: o ícone do app + nome */
+  body.web-largo ion-tab-bar::before {
+    content: 'Finanças MEI';
+    display: flex;
+    align-items: center;
+    flex: 0 0 auto;
+    min-height: 44px;
+    margin: 4px 4px 20px;
+    padding-left: 52px;
+    font-weight: 600;
+    font-size: 1.0625rem;
+    color: var(--ion-color-primary);
+    background: url('assets/icon/icon-192.png') no-repeat left center / 40px 40px;
+  }
+  body.web-largo ion-tab-button {
+    flex: 0 0 auto;
+    width: 100%;
+    max-width: none;
+    height: auto;
+    min-height: 48px;
+    margin-bottom: 4px;
+    border-radius: var(--app-radius-md);
+    justify-content: flex-start;
+    --padding-start: 12px;
+    --padding-end: 12px;
+  }
+  body.web-largo ion-tab-button::part(native) {
+    justify-content: flex-start;
+    gap: 12px;
+    padding-left: 14px;
+  }
+  body.web-largo ion-tab-button ion-label {
+    font-size: 0.9375rem;
+    font-weight: 500;
+  }
+  body.web-largo ion-tab-button.tab-selected {
+    background: rgba(var(--ion-color-primary-rgb), 0.12);
+  }
+  body.web-largo ion-tab-button:hover:not(.tab-selected) {
+    background: rgba(var(--ion-color-primary-rgb), 0.06);
+  }
+
+  /* Conteúdo: centralizado, com largura confortável (a rolagem fica na borda da janela) */
+  body.web-largo ion-app:has(ion-tabs) ion-content::part(scroll) {
+    max-width: none;
+    margin: 0;
+    padding-left: max(8px, calc((100% - var(--app-conteudo-max)) / 2));
+    padding-right: max(8px, calc((100% - var(--app-conteudo-max)) / 2));
+  }
+
+  /* Dashboard em duas colunas: os cartões de análise lado a lado; o resto ocupa a largura toda */
+  body.web-largo ion-content.dashboard-conteudo .paineis {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    align-items: start;
+    column-gap: 8px;
+  }
+  /* o último cartão, se ficar sozinho numa linha, ocupa a largura toda */
+  body.web-largo ion-content.dashboard-conteudo .paineis > ion-card:last-child:nth-child(odd) {
+    grid-column: 1 / -1;
   }
 }
