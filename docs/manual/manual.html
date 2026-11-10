@@ -1,0 +1,195 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<title>Manual do Usuário — Finanças MEI</title>
+<style>
+  @page { size: A4; margin: 18mm 16mm; }
+  * { box-sizing: border-box; }
+  body { font-family: "Segoe UI", Arial, sans-serif; color: #1f2933; font-size: 11pt; line-height: 1.5; margin: 0; }
+  h1, h2, h3 { color: #0f766e; line-height: 1.25; }
+  h2 { font-size: 17pt; border-bottom: 2px solid #0f766e; padding-bottom: 4px; margin-top: 28px; break-after: avoid; }
+  h3 { font-size: 12.5pt; margin: 18px 0 4px; break-after: avoid; }
+  p, li { orphans: 3; widows: 3; }
+  .capa { height: 255mm; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; break-after: page; }
+  .capa h1 { font-size: 34pt; margin: 18px 0 4px; }
+  .capa .sub { font-size: 15pt; color: #52606d; }
+  .capa .versao { margin-top: 40px; font-size: 11pt; color: #52606d; }
+  .logo { width: 110px; height: 110px; border-radius: 24px; }
+  figure { margin: 14px 0; text-align: center; break-inside: avoid; }
+  figure img { max-width: 100%; border: 1px solid #d5dbe1; border-radius: 6px; }
+  figure.estreita img { max-width: 230px; }
+  figcaption { font-size: 9.5pt; color: #52606d; margin-top: 4px; }
+  .dica, .aviso { border-left: 4px solid #0f766e; background: #e6f4f1; padding: 8px 12px; margin: 12px 0; break-inside: avoid; }
+  .aviso { border-color: #b45309; background: #fdf3e3; }
+  table { border-collapse: collapse; width: 100%; margin: 10px 0; break-inside: avoid; font-size: 10.5pt; }
+  th, td { border: 1px solid #cbd2d9; padding: 6px 8px; text-align: left; vertical-align: top; }
+  th { background: #0f766e; color: #fff; }
+  ol, ul { padding-left: 22px; }
+  .sumario li { margin: 3px 0; }
+  .nova { break-before: page; }
+</style>
+</head>
+<body>
+
+<section class="capa">
+  <img class="logo" src="../../src/assets/icon/icon-192.png" alt="">
+  <h1>Finanças MEI</h1>
+  <div class="sub">Manual do Usuário</div>
+  <div class="versao">Versão 1.0.0.1 · Novembro de 2026<br>financasmei.app.br</div>
+</section>
+
+<h2 style="margin-top:0">Sumário</h2>
+<ol class="sumario">
+  <li>O que é o Finanças MEI</li>
+  <li>Como acessar (navegador e aplicativo)</li>
+  <li>Criar conta e entrar</li>
+  <li>Dashboard</li>
+  <li>Transações (inclusive parceladas)</li>
+  <li>Contas bancárias</li>
+  <li>Sazonalidade e caixa necessário</li>
+  <li>Investimentos</li>
+  <li>Perfil, segurança e aparência</li>
+  <li>Dúvidas frequentes</li>
+</ol>
+
+<h2>1. O que é o Finanças MEI</h2>
+<p>O Finanças MEI é um gestor financeiro para microempreendedores individuais. Ele reúne em um só lugar o que entra e o que sai do seu dinheiro, separando a vida pessoal (<strong>PF</strong>, pessoa física) da empresa (<strong>PJ</strong>, pessoa jurídica), e ajuda a se preparar para os meses de vendas fracas.</p>
+<ul>
+  <li><strong>Transações:</strong> registre receitas e despesas, inclusive compras parceladas.</li>
+  <li><strong>Contas:</strong> acompanhe o saldo de cada conta bancária.</li>
+  <li><strong>Dashboard:</strong> veja o saldo, o resumo do mês e avisos importantes.</li>
+  <li><strong>Sazonalidade:</strong> cadastre períodos de alta ou baixa e veja se haverá caixa suficiente.</li>
+  <li><strong>Investimentos:</strong> guarde ideias de investimento com valor e retorno estimados.</li>
+</ul>
+
+<h2>2. Como acessar</h2>
+<h3>No navegador (computador, tablet ou celular)</h3>
+<p>Abra <strong>https://financasmei.app.br</strong>. Em telas largas (computador) o menu fica à esquerda; em telas menores as abas ficam na parte de baixo.</p>
+<h3>No aplicativo Android</h3>
+<ol>
+  <li>No celular, abra o endereço <strong>https://financasmei.app.br/downloads/GestorFinanceiro-debug.apk</strong>.</li>
+  <li>Abra o arquivo baixado. Se o Android pedir, permita a instalação de aplicativos de fontes desconhecidas.</li>
+  <li>Toque em <em>Instalar</em> e abra o app <strong>Finanças MEI</strong>.</li>
+</ol>
+<div class="dica">Para atualizar o app, baixe o arquivo novamente e instale por cima: seus dados ficam guardados na sua conta, não no celular.</div>
+
+<h2 class="nova">3. Criar conta e entrar</h2>
+<figure class="estreita"><img src="img/web-1440-login.png" alt=""><figcaption>Tela de login (no navegador, em computador)</figcaption></figure>
+<h3>Criar sua conta</h3>
+<ol>
+  <li>Na tela de login, toque em <em>Criar conta</em> (abaixo de "Não tem conta?").</li>
+  <li>Preencha <strong>Nome</strong>, <strong>E-mail</strong>, <strong>Senha</strong> e <strong>Confirmar senha</strong>. CPF e CNPJ são opcionais.</li>
+  <li>Escolha o <strong>Tipo de perfil</strong>: PF, PJ ou Ambos.</li>
+  <li>Leia e aceite os termos de uso e conclua o cadastro.</li>
+</ol>
+<h3>Entrar</h3>
+<p>Informe e-mail e senha. No aplicativo, depois do primeiro login, você pode ativar a <strong>entrada por biometria</strong> (digital ou rosto), descrita na seção 9.</p>
+<h3>Esqueci minha senha</h3>
+<ol>
+  <li>Na tela de login, toque em <em>Esqueci minha senha</em> e informe seu e-mail.</li>
+  <li>Você receberá um <strong>código</strong> por e-mail. Confira também a caixa de spam.</li>
+  <li>Digite o código e escolha uma nova senha.</li>
+</ol>
+<div class="aviso">Por segurança, há um limite de tentativas de login e de código. Se errar várias vezes, aguarde alguns minutos antes de tentar de novo.</div>
+
+<h2 class="nova">4. Dashboard</h2>
+<figure><img src="img/web-1440-dashboard.png" alt=""><figcaption>Dashboard no navegador, em computador</figcaption></figure>
+<p>É a tela inicial. De cima para baixo:</p>
+<table>
+  <tr><th style="width:30%">Item</th><th>O que mostra</th></tr>
+  <tr><td>Geral / PF / PJ</td><td>Filtra tudo pelo tipo de pessoa.</td></tr>
+  <tr><td>Este mês / Anterior / Tudo</td><td>Período do resumo.</td></tr>
+  <tr><td>Saldo</td><td>Receitas menos despesas do período, já considerando lançamentos sem conta. Mostra só o que já aconteceu até hoje.</td></tr>
+  <tr><td>Receitas e Despesas</td><td>Totais do período. O cartão que supera o outro ganha destaque.</td></tr>
+  <tr><td>Receitas vs Despesas</td><td>Barras com a proporção de cada um.</td></tr>
+  <tr><td>Alertas sazonais</td><td>Períodos de sazonalidade ativos agora, com o nível de impacto.</td></tr>
+  <tr><td>Caixa para sazonalidade</td><td>Compara o saldo da conta escolhida com o caixa necessário (seção 7).</td></tr>
+  <tr><td>Últimas transações</td><td>Os lançamentos mais recentes.</td></tr>
+</table>
+<div class="dica">Se houver lançamentos sem conta vinculada, o Dashboard avisa quanto é e quantos são. Vincule-os a uma conta para o controle ficar completo.</div>
+<p>No celular, puxe a tela para baixo para atualizar os dados.</p>
+<figure class="estreita"><img src="img/web-390-dashboard.png" alt=""><figcaption>Dashboard no celular</figcaption></figure>
+
+<h2 class="nova">5. Transações</h2>
+<figure><img src="img/web-1440-transacoes-form.png" alt=""><figcaption>Formulário Nova Transação</figcaption></figure>
+<p>Na aba <strong>Transações</strong> estão todos os lançamentos. Use as abas <em>Todas / PF / PJ</em> para filtrar.</p>
+<h3>Registrar uma transação</h3>
+<ol>
+  <li>Toque no botão <strong>+</strong>.</li>
+  <li>Preencha <strong>Descrição</strong>, <strong>Valor</strong>, <strong>Data</strong>, <strong>Tipo</strong> (Receita ou Despesa) e <strong>Pessoa</strong> (Física ou Jurídica).</li>
+  <li>Escolha a <strong>Categoria</strong> e a <strong>Conta</strong>. Se ainda não houver categorias, use o link <em>Criar categorias</em>.</li>
+  <li>Toque em <strong>Salvar</strong>.</li>
+</ol>
+<h3>Transação parcelada</h3>
+<ol>
+  <li>Ative a chave <strong>Parcelado</strong>.</li>
+  <li>Informe o <strong>montante total</strong> e a <strong>quantidade de parcelas</strong>.</li>
+  <li>Ao salvar, o sistema cria uma transação por mês, com a data de cada parcela, e divide o valor entre elas.</li>
+</ol>
+<div class="dica">Parcelas com data futura não entram no saldo de hoje, mas já aparecem na lista e contam no mês em que vencem.</div>
+<h3>Editar ou excluir</h3>
+<p>Toque na transação para editar; na tela de edição há o botão <em>Excluir transação</em>. Também dá para deslizar o item para o lado e tocar no ícone de lixeira.</p>
+
+<h2 class="nova">6. Contas bancárias</h2>
+<p>Cadastre cada conta que você usa para acompanhar o saldo atual dela.</p>
+<table>
+  <tr><th style="width:30%">Campo</th><th>Descrição</th></tr>
+  <tr><td>Nome da conta *</td><td>Como você quer chamá-la (ex.: Principal, Caixa da loja).</td></tr>
+  <tr><td>Instituição financeira</td><td>Banco ou carteira digital.</td></tr>
+  <tr><td>Número da conta</td><td>Opcional.</td></tr>
+  <tr><td>Tipo *</td><td>Conta Corrente, Poupança ou Caixa.</td></tr>
+  <tr><td>Vínculo *</td><td>Se a conta é PF ou PJ. Cada tipo tem um ícone diferente na lista.</td></tr>
+  <tr><td>Saldo inicial *</td><td>Quanto havia na conta quando você começou a usar o app. Ele é somado ao saldo atual.</td></tr>
+</table>
+<p>O saldo atual de cada conta é o saldo inicial mais as receitas e menos as despesas lançadas nela, até hoje. Use o filtro <em>Todas / PF / PJ</em> no topo da lista.</p>
+
+<h2>7. Sazonalidade e caixa necessário</h2>
+<p>Todo negócio tem épocas boas e ruins. Aqui você cadastra esses períodos e, se quiser, define quanto dinheiro precisa ter guardado antes deles começarem.</p>
+<h3>Cadastrar um período</h3>
+<ol>
+  <li>Toque em <strong>+</strong> (ou <em>Adicionar primeiro período</em>).</li>
+  <li>Informe o <strong>Nome</strong> (ex.: Baixa de janeiro), o <strong>Mês de início</strong>, o <strong>Mês de fim</strong> e o <strong>Nível de impacto</strong>.</li>
+  <li>Opcional: preencha <strong>Descrição</strong>.</li>
+  <li>Em <strong>Reserva de caixa (opcional)</strong>: escolha a <strong>Data para ter o caixa</strong>, o <strong>Caixa necessário (R$)</strong> e a <strong>Conta para débito</strong>.</li>
+</ol>
+<h3>Como o Dashboard usa isso</h3>
+<p>A partir da data escolhida e até o fim do período, o Dashboard mostra o cartão <strong>Caixa para sazonalidade</strong>, comparando o saldo da conta com o valor necessário:</p>
+<ul>
+  <li><strong>Saldo suficiente</strong> e quanto sobra (folga), ou</li>
+  <li><strong>Saldo insuficiente</strong> e quanto falta, com uma barra mostrando a cobertura.</li>
+</ul>
+
+<h2 class="nova">8. Investimentos</h2>
+<p>Um caderno de ideias para o dinheiro que sobra. Cada ideia tem: <strong>Título *</strong>, <strong>Descrição</strong>, <strong>Valor estimado (R$)</strong>, <strong>Retorno estimado (%)</strong>, <strong>Prioridade *</strong> e <strong>Status *</strong>. A prioridade pode ser Alta, Média ou Baixa; o status acompanha a ideia: Ideia, Em Análise, Aprovado ou Descartado.</p>
+<div class="aviso">Os valores de retorno são estimativas suas. O app não faz recomendação de investimentos.</div>
+
+<h2>9. Perfil, segurança e aparência</h2>
+<table>
+  <tr><th style="width:30%">Opção</th><th>O que faz</th></tr>
+  <tr><td>Editar Perfil</td><td>Altera seus dados cadastrais.</td></tr>
+  <tr><td>Categorias</td><td>Cria e organiza as categorias de receitas e despesas.</td></tr>
+  <tr><td>Interface inicial</td><td>Escolhe o que aparece primeiro: PF, PJ ou Ambos.</td></tr>
+  <tr><td>Entrar com biometria</td><td>No aplicativo, ativa o desbloqueio por digital ou rosto nos próximos acessos. Se o aparelho não tiver biometria cadastrada, a opção não funciona.</td></tr>
+  <tr><td>Tema</td><td>Claro, Escuro ou Automático (acompanha o aparelho).</td></tr>
+  <tr><td>Sair</td><td>Botão no fim da tela de Perfil; encerra a sessão neste aparelho.</td></tr>
+</table>
+<div class="dica">Em computador compartilhado, sempre use <em>Sair</em> ao terminar.</div>
+
+<h2 class="nova">10. Dúvidas frequentes</h2>
+<h3>O saldo da conta não bate com o do banco.</h3>
+<p>Confira o saldo inicial cadastrado e se todas as transações foram vinculadas à conta certa. Lançamentos com data futura só entram no saldo quando a data chegar.</p>
+<h3>O código de recuperação de senha não chegou.</h3>
+<p>Verifique o spam e se digitou o e-mail correto. Aguarde alguns minutos antes de pedir outro.</p>
+<h3>O teclado cobre o campo que estou preenchendo.</h3>
+<p>Role a tela um pouco; o app ajusta a posição ao abrir o teclado.</p>
+<h3>Posso usar no celular e no computador ao mesmo tempo?</h3>
+<p>Sim. Os dados ficam na sua conta e aparecem nos dois.</p>
+<h3>O aplicativo não instala.</h3>
+<p>Permita a instalação de fontes desconhecidas para o navegador que baixou o arquivo e tente de novo.</p>
+<h3>Meus dados estão seguros?</h3>
+<p>A conexão é protegida por HTTPS e a sua senha é guardada de forma criptografada. Veja os Termos de Uso dentro do app para detalhes.</p>
+
+<p style="margin-top:30px;color:#52606d;font-size:9.5pt">Finanças MEI · versão 1.0.0.1 · financasmei.app.br</p>
+</body>
+</html>
