@@ -1,8 +1,9 @@
-import { DEFAULT_CURRENCY_CODE, LOCALE_ID, NgModule } from '@angular/core';
+import { APP_INITIALIZER, DEFAULT_CURRENCY_CODE, ErrorHandler, LOCALE_ID, NgModule } from '@angular/core';
+import * as Sentry from '@sentry/angular';
 import { registerLocaleData } from '@angular/common';
 import localePt from '@angular/common/locales/pt';
 import { BrowserModule } from '@angular/platform-browser';
-import { RouteReuseStrategy } from '@angular/router';
+import { Router, RouteReuseStrategy } from '@angular/router';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 
 import { IonicModule, IonicRouteStrategy } from '@ionic/angular';
@@ -24,7 +25,12 @@ registerLocaleData(localePt, 'pt-BR');
     { provide: DEFAULT_CURRENCY_CODE, useValue: 'BRL' },
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
     { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true },
-    { provide: HTTP_INTERCEPTORS, useClass: ErrorInterceptor, multi: true }
+    { provide: HTTP_INTERCEPTORS, useClass: ErrorInterceptor, multi: true },
+    // Erros não tratados do Angular vão para o Sentry (no-op se não houver DSN)
+    { provide: ErrorHandler, useValue: Sentry.createErrorHandler({ showDialog: false }) },
+    // Liga o tracing de rotas do Angular ao Sentry
+    { provide: Sentry.TraceService, deps: [Router] },
+    { provide: APP_INITIALIZER, useFactory: () => () => {}, deps: [Sentry.TraceService], multi: true }
   ],
   bootstrap: [AppComponent]
 })

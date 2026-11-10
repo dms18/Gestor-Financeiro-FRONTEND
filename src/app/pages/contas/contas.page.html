@@ -40,7 +40,7 @@
   <ion-list>
     <ion-item-sliding *ngFor="let c of contasFiltradas">
       <ion-item button (click)="abrirModalEditar(c)">
-        <ion-icon slot="start" name="business-outline" color="primary" aria-hidden="true"></ion-icon>
+        <ion-icon slot="start" [name]="iconeVinculo(c.tipoPessoa)" [color]="c.tipoPessoa === 'PJ' ? 'secondary' : 'primary'" aria-hidden="true"></ion-icon>
         <ion-label>
           <h2>{{ c.nome }}</h2>
           <p *ngIf="c.instituicao">{{ c.instituicao }}</p>

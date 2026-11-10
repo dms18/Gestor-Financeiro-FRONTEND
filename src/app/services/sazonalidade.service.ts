@@ -13,6 +13,10 @@ export class SazonalidadeService {
     return this.api.get<any[]>('/sazonalidade');
   }
 
+  obterReservas(): Observable<any[]> {
+    return this.api.get<any[]>('/sazonalidade/reservas');
+  }
+
   obterAletasAtivos(): Observable<any[]> {
     return this.api.get<any[]>('/sazonalidade/alertas-ativos');
   }

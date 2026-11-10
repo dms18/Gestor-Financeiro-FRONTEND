@@ -36,6 +36,13 @@ export class CampoErroComponent {
       const minimo = Number(erros.min.min).toLocaleString('pt-BR');
       return `O valor mínimo é ${minimo}`;
     }
+    if (erros.max) {
+      const maximo = Number(erros.max.max).toLocaleString('pt-BR');
+      return `O valor máximo é ${maximo}`;
+    }
+    if (erros.pattern) {
+      return 'Informe um número inteiro';
+    }
     return 'Valor inválido';
   }
 }

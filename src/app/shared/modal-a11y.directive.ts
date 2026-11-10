@@ -31,6 +31,17 @@ export class ModalA11yDirective implements OnInit, OnDestroy {
     }
   }
 
+  /** Teclado virtual aberto: rola o campo focado para o meio da área visível. */
+  @HostListener('focusin', ['$event'])
+  aoFocar(evento: FocusEvent) {
+    const alvo = evento.target as HTMLElement | null;
+    if (!alvo || alvo === this.el.nativeElement || !/^(INPUT|TEXTAREA)$/.test(alvo.tagName)) {
+      return;
+    }
+    // espera a animação do teclado / redimensionamento da janela
+    setTimeout(() => alvo.scrollIntoView({ block: 'center', behavior: 'smooth' }), 300);
+  }
+
   @HostListener('keydown', ['$event'])
   prenderFoco(evento: KeyboardEvent) {
     if (evento.key !== 'Tab') {

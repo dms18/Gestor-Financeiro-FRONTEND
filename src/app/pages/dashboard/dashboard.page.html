@@ -43,6 +43,13 @@
       </ion-card-content>
     </ion-card>
 
+    <p class="aviso-sem-conta" *ngIf="resumo.semContaQtd" role="note">
+      <ion-icon name="information-circle-outline" aria-hidden="true"></ion-icon>
+      {{ resumo.semConta | currency:'BRL':'symbol':'1.2-2' }} sem conta vinculada
+      ({{ resumo.semContaQtd }} {{ resumo.semContaQtd === 1 ? 'lançamento' : 'lançamentos' }}),
+      já incluído no saldo.
+    </p>
+
     <div class="cards-linha">
       <ion-card class="card-mini receitas"
                 [class.destaque-positivo]="resumo.totalReceitas > resumo.totalDespesas">
@@ -105,6 +112,39 @@
         <ion-icon name="calendar" aria-hidden="true"></ion-icon>
         <ion-label>{{ a.nome }} ({{ a.nivelImpacto | rotuloEnum }})</ion-label>
       </ion-chip>
+    </ion-card-content>
+  </ion-card>
+
+  <!-- Caixa para sazonalidade: aparece da data-alvo até o fim do período -->
+  <ion-card *ngIf="reservas.length > 0" class="ion-margin-horizontal card-reservas">
+    <ion-card-header>
+      <ion-card-title>
+        <ion-icon name="wallet" color="primary" aria-hidden="true"></ion-icon>
+        Caixa para sazonalidade
+      </ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      <div class="reserva" *ngFor="let r of reservas" [class.insuficiente]="!r.suficiente">
+        <div class="reserva-topo">
+          <strong>{{ r.nome }}</strong>
+          <ion-chip [color]="r.suficiente ? 'success' : 'danger'" outline="true">
+            <ion-icon [name]="r.suficiente ? 'checkmark-circle' : 'alert-circle'" aria-hidden="true"></ion-icon>
+            <ion-label>{{ r.suficiente ? 'Saldo suficiente' : 'Saldo insuficiente' }}</ion-label>
+          </ion-chip>
+        </div>
+        <p class="reserva-sub">Conta {{ r.contaNome }} · meta desde {{ formatarData(r.dataAlvo) }} · até {{ formatarData(r.fimDoPeriodo) }}</p>
+
+        <progress class="reserva-barra" max="100" [value]="r.percentualCobertura"
+                  [attr.aria-label]="'Saldo cobre ' + r.percentualCobertura + '% do caixa necessário para ' + r.nome"></progress>
+
+        <div class="reserva-valores">
+          <span>Saldo <strong>{{ r.saldoConta | currency:'BRL':'symbol':'1.2-2' }}</strong></span>
+          <span>Necessário <strong>{{ r.valorNecessario | currency:'BRL':'symbol':'1.2-2' }}</strong></span>
+        </div>
+        <p class="reserva-resultado" [class.negativo]="!r.suficiente">
+          {{ r.suficiente ? 'Folga de ' : 'Faltam ' }}{{ (r.diferenca < 0 ? -r.diferenca : r.diferenca) | currency:'BRL':'symbol':'1.2-2' }}
+        </p>
+      </div>
     </ion-card-content>
   </ion-card>
 

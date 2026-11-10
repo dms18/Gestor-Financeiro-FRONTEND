@@ -3,7 +3,7 @@ import { TransacaoService } from '../../services/transacao.service';
 import { SazonalidadeService } from '../../services/sazonalidade.service';
 import { AuthService } from '../../services/auth.service';
 import { ResumoFinanceiro, Transacao, TipoPessoa } from '../../models/transacao';
-import { Sazonalidade } from '../../models/sazonalidade';
+import { ReservaSazonal, Sazonalidade } from '../../models/sazonalidade';
 import { Usuario } from '../../models/usuario';
 
 @Component({
@@ -25,6 +25,7 @@ export class DashboardPage {
 
   ultimasTransacoes: Transacao[] = [];
   alertasAtivos: Sazonalidade[] = [];
+  reservas: ReservaSazonal[] = [];
   carregando = false;
   private interfaceAplicada = false;
 
@@ -92,6 +93,12 @@ export class DashboardPage {
       next: (alertas) => (this.alertasAtivos = alertas || []),
       error: () => (this.alertasAtivos = [])
     });
+
+    // caixa necessário x saldo da conta, a partir da data-alvo de cada período sazonal
+    this.sazonalidadeService.obterReservas().subscribe({
+      next: (reservas) => (this.reservas = reservas || []),
+      error: () => (this.reservas = [])
+    });
   }
 
   /** Mês/ano do período escolhido; null = todo o histórico. */
@@ -129,6 +136,15 @@ export class DashboardPage {
       return 0;
     }
     return (this.resumo.totalDespesas / total) * 100;
+  }
+
+  /** Data yyyy-MM-dd no formato dd/MM/yyyy, sem passar por fuso horário. */
+  formatarData(iso?: string | null): string {
+    if (!iso) {
+      return '';
+    }
+    const [a, m, d] = iso.substring(0, 10).split('-');
+    return `${d}/${m}/${a}`;
   }
 
   corImpacto(nivel: string): string {

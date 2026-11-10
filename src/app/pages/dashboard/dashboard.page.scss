@@ -10,6 +10,23 @@
 }
 
 .cards-resumo {
+  // explica a diferença entre o saldo e a soma das contas (lançamentos sem conta)
+  .aviso-sem-conta {
+    display: flex;
+    align-items: flex-start;
+    gap: 6px;
+    margin: 4px 16px 8px;
+    font-size: 0.8125rem;
+    line-height: 1.35;
+    color: var(--app-text-muted);
+
+    ion-icon {
+      flex: 0 0 auto;
+      margin-top: 1px;
+      font-size: 1rem;
+    }
+  }
+
   .card-saldo {
     margin: 4px 0;
     background: var(--ion-color-primary);
@@ -116,4 +133,76 @@
 ion-card-title ion-icon {
   vertical-align: middle;
   margin-right: 4px;
+}
+
+// Caixa para sazonalidade (saldo da conta x necessário)
+.card-reservas {
+  .reserva + .reserva {
+    margin-top: 16px;
+    padding-top: 16px;
+    border-top: 1px solid var(--ion-color-step-150, rgba(0, 0, 0, 0.12));
+  }
+
+  .reserva-topo {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .reserva-sub {
+    margin: 2px 0 8px;
+    font-size: 0.8125rem;
+    color: var(--app-text-muted);
+  }
+
+  .reserva-barra {
+    width: 100%;
+    height: 10px;
+    border: 0;
+    border-radius: 5px;
+    overflow: hidden;
+    appearance: none;
+    -webkit-appearance: none;
+    background: var(--ion-color-step-150, rgba(0, 0, 0, 0.12));
+    accent-color: var(--ion-color-success);
+
+    &::-webkit-progress-bar {
+      background: var(--ion-color-step-150, rgba(0, 0, 0, 0.12));
+    }
+    &::-webkit-progress-value {
+      background: var(--ion-color-success);
+    }
+    &::-moz-progress-bar {
+      background: var(--ion-color-success);
+    }
+  }
+
+  .insuficiente .reserva-barra {
+    accent-color: var(--ion-color-danger);
+
+    &::-webkit-progress-value {
+      background: var(--ion-color-danger);
+    }
+    &::-moz-progress-bar {
+      background: var(--ion-color-danger);
+    }
+  }
+
+  .reserva-valores {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 8px;
+    font-size: 0.875rem;
+  }
+
+  .reserva-resultado {
+    margin: 4px 0 0;
+    font-weight: 600;
+    color: var(--ion-color-success-shade, var(--ion-color-success));
+
+    &.negativo {
+      color: var(--ion-color-danger);
+    }
+  }
 }

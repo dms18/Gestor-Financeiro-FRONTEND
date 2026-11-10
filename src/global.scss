@@ -141,8 +141,9 @@ ion-text strong {
 .form-painel {
   width: 100%;
   max-width: 600px;
-  max-height: 92vh;
-  max-height: 92dvh;
+  /* Relativo ao overlay (que acompanha a área visível): com o teclado aberto o
+     painel encolhe em vez de vazar por cima do cabeçalho. */
+  max-height: 100%;
   background: var(--ion-background-color, #fff);
   border-radius: var(--app-radius-lg) var(--app-radius-lg) 0 0;
   display: flex;
@@ -157,6 +158,8 @@ ion-text strong {
 }
 
 .form-conteudo {
+  flex: 1 1 auto;
+  min-height: 0;
   overflow-y: auto;
   padding: var(--app-space-3) var(--app-space-4) calc(var(--app-space-6) + env(safe-area-inset-bottom));
 }
@@ -325,4 +328,40 @@ body.dark { @include app-dark-colors; @include app-dark-toolbars; }
   body:not(.light) { @include app-dark-colors; @include app-dark-toolbars; }
   .ios body:not(.light) { @include app-dark-surfaces-ios; }
   .md body:not(.light) { @include app-dark-surfaces-md; }
+}
+
+/*
+ * =====================================================================
+ * NAVEGADOR DE COMPUTADOR
+ * ---------------------------------------------------------------------
+ * O app é pensado para celular. Em telas largas ele fica numa coluna central (como um celular no meio da
+ * tela), com fundo e sombra discretos, em vez de esticar cabeçalho e abas por toda a largura.
+ * Os alertas e toasts do Ionic ficam dentro de <ion-app>, então respeitam a mesma largura.
+ * =====================================================================
+ */
+:root {
+  --app-desktop-fundo: #dbe6e5;
+  --app-desktop-sombra: 0 0 0 1px rgba(15, 118, 110, 0.12), 0 20px 60px rgba(15, 118, 110, 0.2);
+}
+body.dark {
+  --app-desktop-fundo: #04070a;
+  --app-desktop-sombra: 0 0 0 1px rgba(255, 255, 255, 0.08), 0 20px 60px rgba(0, 0, 0, 0.6);
+}
+@media (prefers-color-scheme: dark) {
+  body:not(.light) {
+    --app-desktop-fundo: #04070a;
+    --app-desktop-sombra: 0 0 0 1px rgba(255, 255, 255, 0.08), 0 20px 60px rgba(0, 0, 0, 0.6);
+  }
+}
+
+@media (min-width: 768px) {
+  body {
+    background: var(--app-desktop-fundo);
+  }
+
+  ion-app {
+    max-width: 640px;
+    margin: 0 auto;
+    box-shadow: var(--app-desktop-sombra);
+  }
 }

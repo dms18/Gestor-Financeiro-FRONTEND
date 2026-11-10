@@ -6,8 +6,8 @@ const config: CapacitorConfig = {
   npmClient: "npm",
   webDir: "www",
   server: {
-    androidScheme: "http",
-    cleartext: true
+    androidScheme: "https",
+    cleartext: false
   },
 };
 

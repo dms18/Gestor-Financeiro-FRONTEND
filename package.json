@@ -7,7 +7,8 @@
     "ng": "ng",
     "start": "cross-env NODE_OPTIONS=--openssl-legacy-provider ng serve",
     "build": "ng build",
-    "test": "ng test",
+    "test": "cross-env NODE_OPTIONS=--openssl-legacy-provider ng test",
+    "test:ci": "cross-env NODE_OPTIONS=--openssl-legacy-provider ng test --watch=false --browsers=ChromeHeadlessCI --code-coverage",
     "lint": "ng lint",
     "e2e": "ng e2e"
   },
@@ -28,6 +29,8 @@
     "@capacitor/splash-screen": "^4.0.0",
     "@ionic/angular": "^5.6.7",
     "@ionic/pwa-elements": "^3.0.2",
+    "@sentry/angular": "^7.120.4",
+    "capacitor-native-biometric": "^4.2.2",
     "core-js": "^3.6.5",
     "rxjs": "^6.5.5",
     "tslib": "^2.0.0",

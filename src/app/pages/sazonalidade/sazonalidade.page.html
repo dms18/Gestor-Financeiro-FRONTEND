@@ -37,6 +37,11 @@
 
     <ion-card-content>
       <p *ngIf="p.descricao">{{ p.descricao }}</p>
+      <p *ngIf="p.dataAlvo" class="reserva-info">
+        <ion-icon name="wallet-outline" aria-hidden="true"></ion-icon>
+        Reservar {{ p.valorNecessario | currency:'BRL':'symbol':'1.2-2' }} até {{ formatarData(p.dataAlvo) }}
+        na conta {{ p.contaDebitoNome }}
+      </p>
       <ion-chip [color]="corImpacto(p.nivelImpacto)" outline="true">
         <ion-icon name="trending-up" aria-hidden="true"></ion-icon>
         <ion-label>Impacto {{ p.nivelImpacto | rotuloEnum | lowercase }}</ion-label>
@@ -106,6 +111,48 @@
               <ion-label position="stacked">Descrição</ion-label>
               <ion-textarea formControlName="descricao" rows="3" placeholder="Detalhes do período"></ion-textarea>
             </ion-item>
+          </ion-list>
+
+          <ion-list class="reserva-form">
+            <ion-list-header>
+              <ion-label>Reserva de caixa (opcional)</ion-label>
+            </ion-list-header>
+            <ion-note class="reserva-nota">
+              Na data escolhida, o Dashboard passa a comparar o saldo da conta com o caixa necessário para este período.
+            </ion-note>
+
+            <ion-item>
+              <ion-label position="stacked">Data para ter o caixa</ion-label>
+              <ion-datetime formControlName="dataAlvo" displayFormat="DD/MM/YYYY" placeholder="Selecione a data"
+                cancelText="Cancelar" doneText="OK"
+                monthNames="janeiro,fevereiro,março,abril,maio,junho,julho,agosto,setembro,outubro,novembro,dezembro"
+                monthShortNames="jan,fev,mar,abr,mai,jun,jul,ago,set,out,nov,dez"
+                dayNames="domingo,segunda-feira,terça-feira,quarta-feira,quinta-feira,sexta-feira,sábado"
+                dayShortNames="dom,seg,ter,qua,qui,sex,sáb"></ion-datetime>
+            </ion-item>
+
+            <ion-item>
+              <ion-label position="stacked">Caixa necessário (R$)</ion-label>
+              <ion-input type="number" inputmode="decimal" formControlName="valorNecessario" placeholder="0,00"></ion-input>
+            </ion-item>
+            <app-campo-erro [control]="sazonalidadeForm.get('valorNecessario')"></app-campo-erro>
+
+            <ion-item>
+              <ion-label position="stacked">Conta para débito</ion-label>
+              <ion-select cancelText="Cancelar" okText="OK" formControlName="contaDebitoId" interface="alert" placeholder="Selecione a conta">
+                <ion-select-option *ngFor="let c of contas" [value]="c.id">
+                  {{ c.nome }}<ng-container *ngIf="c.instituicao"> ({{ c.instituicao }})</ng-container>
+                </ion-select-option>
+              </ion-select>
+            </ion-item>
+
+            <ion-note color="warning" class="reserva-nota" *ngIf="sazonalidadeForm.hasError('reservaIncompleta')" role="alert">
+              Preencha a data, o caixa necessário e a conta juntos, ou limpe a reserva.
+            </ion-note>
+            <ion-button *ngIf="reservaPreenchida" fill="clear" size="small" color="medium" type="button" (click)="limparReserva()">
+              <ion-icon slot="start" name="close-circle-outline" aria-hidden="true"></ion-icon>
+              Limpar reserva
+            </ion-button>
           </ion-list>
 
           <ion-button expand="block" class="ion-margin-top" (click)="salvar()">

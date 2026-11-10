@@ -3,25 +3,62 @@
 
 <head>
   <meta charset="utf-8" />
-  <title>Gestor Financeiro</title>
+  <title>Finanças MEI · Gestor Financeiro</title>
 
   <base href="/" />
 
   <!-- Zoom liberado (WCAG 1.4.4): não usar maximum-scale nem user-scalable=no -->
   <meta name="viewport" content="viewport-fit=cover, width=device-width, initial-scale=1.0" />
-  <meta name="theme-color" content="#0f766e" />
+  <meta name="description" content="Controle contas, receitas, despesas, parcelas e a sazonalidade do seu negócio. Gestor financeiro para MEI." />
+  <meta name="color-scheme" content="light dark" />
+  <meta name="theme-color" content="#0f766e" media="(prefers-color-scheme: light)" />
+  <meta name="theme-color" content="#0b0f14" media="(prefers-color-scheme: dark)" />
   <meta name="format-detection" content="telephone=no" />
   <meta name="msapplication-tap-highlight" content="no" />
 
-  <link rel="icon" type="image/png" href="assets/icon/favicon.png" />
+  <!-- Ícone da aba do navegador: o mesmo ícone do app -->
+  <link rel="icon" href="favicon.ico" sizes="any" />
+  <link rel="icon" type="image/png" sizes="32x32" href="assets/icon/favicon-32.png" />
+  <link rel="icon" type="image/png" sizes="16x16" href="assets/icon/favicon-16.png" />
+  <link rel="apple-touch-icon" sizes="180x180" href="assets/icon/apple-touch-icon.png" />
+  <link rel="manifest" href="manifest.webmanifest" />
 
   <!-- add to homescreen for ios -->
   <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-title" content="Finanças MEI" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+
+  <!-- Compartilhamento (WhatsApp, redes sociais) -->
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="Finanças MEI · Gestor Financeiro" />
+  <meta property="og:description" content="Controle contas, receitas, despesas e a sazonalidade do seu negócio." />
+  <meta property="og:image" content="assets/icon/icon-512.png" />
+
+  <!-- Tela de carregamento: aparece antes do Angular iniciar e some sozinha quando ele assume o <app-root> -->
+  <style>
+    .carregando-inicial {
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      gap: 14px; min-height: 100vh; min-height: 100dvh;
+      background: #f7f8fa; color: #4b5563;
+      font: 500 15px/1.4 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    }
+    .carregando-inicial img { width: 88px; height: 88px; border-radius: 20px; box-shadow: 0 8px 24px rgba(15, 118, 110, .25); }
+    .carregando-inicial span { animation: carregando-pulso 1.4s ease-in-out infinite; }
+    @keyframes carregando-pulso { 0%, 100% { opacity: .45; } 50% { opacity: 1; } }
+    @media (prefers-color-scheme: dark) {
+      .carregando-inicial { background: #0b0f14; color: #cbd5e1; }
+    }
+    @media (prefers-reduced-motion: reduce) { .carregando-inicial span { animation: none; } }
+  </style>
 </head>
 
 <body>
-  <app-root></app-root>
+  <app-root>
+    <div class="carregando-inicial" role="status" aria-live="polite">
+      <img src="assets/icon/icon-192.png" alt="" width="88" height="88" />
+      <span>Carregando…</span>
+    </div>
+  </app-root>
 </body>
 
 </html>

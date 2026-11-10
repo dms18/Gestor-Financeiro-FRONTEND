@@ -98,6 +98,22 @@
       </ion-item>
     </ion-list>
 
+    <ion-list inset="true" *ngIf="biometriaDisponivel">
+      <ion-list-header>
+        <ion-label>Segurança</ion-label>
+      </ion-list-header>
+      <ion-item lines="none">
+        <ion-icon name="finger-print-outline" slot="start" color="medium" aria-hidden="true"></ion-icon>
+        <ion-label>Entrar com biometria</ion-label>
+        <ion-toggle
+          slot="end"
+          [checked]="biometriaAtiva"
+          (ionChange)="onBiometriaChange($any($event).detail.checked)"
+          aria-label="Entrar com biometria"
+        ></ion-toggle>
+      </ion-item>
+    </ion-list>
+
     <ion-list inset="true">
       <ion-list-header>
         <ion-label>Aparência</ion-label>

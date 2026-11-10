@@ -37,7 +37,8 @@ export class TransacaoService {
     return this.api.put(`/transacoes/${id}`, transacao);
   }
 
-  deletar(id: number): Observable<any> {
-    return this.api.delete(`/transacoes/${id}`);
+  /** escopo (só para parcelas): UMA (padrão), PROXIMAS (esta e as seguintes) ou TODAS. */
+  deletar(id: number, escopo?: string): Observable<any> {
+    return this.api.delete(`/transacoes/${id}${escopo ? '?escopo=' + escopo : ''}`);
   }
 }

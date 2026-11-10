@@ -47,7 +47,12 @@
           aria-hidden="true"
         ></ion-icon>
         <ion-label>
-          <h2><span class="sr-only">{{ t.tipo === 'RECEITA' ? 'Receita: ' : 'Despesa: ' }}</span>{{ t.descricao }}</h2>
+          <h2>
+            <span class="sr-only">{{ t.tipo === 'RECEITA' ? 'Receita: ' : 'Despesa: ' }}</span>{{ t.descricao }}
+            <ion-badge *ngIf="t.totalParcelas" color="medium" class="badge-parcela">
+              <span class="sr-only">Parcela </span>{{ t.parcelaNumero }}/{{ t.totalParcelas }}
+            </ion-badge>
+          </h2>
           <p>{{ nomeCategoria(t.categoriaId) }} • {{ nomeConta(t.contaId) }}</p>
           <p>{{ t.data | date:'dd/MM/yyyy' }} • {{ t.tipoPessoa }}</p>
         </ion-label>
@@ -88,14 +93,38 @@
             </ion-item>
             <app-campo-erro [control]="transacaoForm.get('descricao')"></app-campo-erro>
 
+            <ion-note *ngIf="parcelaEditando" class="aviso-parcela" role="note">
+              Esta é a parcela {{ parcelaEditando.parcelaNumero }} de {{ parcelaEditando.totalParcelas }}.
+              As alterações valem só para ela.
+            </ion-note>
+
             <ion-item>
-              <ion-label position="stacked">Valor *</ion-label>
-              <ion-input type="number" formControlName="valor" placeholder="0,00"></ion-input>
+              <ion-label position="stacked">{{ parcelado ? 'Montante total *' : 'Valor *' }}</ion-label>
+              <ion-input type="number" inputmode="decimal" formControlName="valor" placeholder="0,00"></ion-input>
             </ion-item>
             <app-campo-erro [control]="transacaoForm.get('valor')"></app-campo-erro>
 
+            <!-- Parcelamento: só na criação -->
+            <ion-item *ngIf="!editandoId" lines="none">
+              <ion-icon name="layers-outline" slot="start" color="medium" aria-hidden="true"></ion-icon>
+              <ion-label>Parcelado</ion-label>
+              <ion-toggle slot="end" formControlName="parcelado" aria-label="Transação parcelada"></ion-toggle>
+            </ion-item>
+
+            <ng-container *ngIf="!editandoId && parcelado">
+              <ion-item>
+                <ion-label position="stacked">Quantidade de parcelas *</ion-label>
+                <ion-input type="number" inputmode="numeric" formControlName="numeroParcelas" placeholder="Ex: 6"></ion-input>
+              </ion-item>
+              <app-campo-erro [control]="transacaoForm.get('numeroParcelas')"></app-campo-erro>
+              <ion-note class="previa-parcelas" role="status" aria-live="polite">
+                <ng-container *ngIf="previaParcelas; else dicaParcelas">{{ previaParcelas }}, uma por mês.</ng-container>
+                <ng-template #dicaParcelas>Informe o montante e a quantidade (de 2 a 60) para ver o valor de cada parcela.</ng-template>
+              </ion-note>
+            </ng-container>
+
             <ion-item>
-              <ion-label position="stacked">Data *</ion-label>
+              <ion-label position="stacked">{{ parcelado ? 'Data da 1ª parcela *' : 'Data *' }}</ion-label>
               <ion-datetime formControlName="data" displayFormat="DD/MM/YYYY" cancelText="Cancelar" doneText="OK"
                 monthNames="janeiro,fevereiro,março,abril,maio,junho,julho,agosto,setembro,outubro,novembro,dezembro"
                 monthShortNames="jan,fev,mar,abr,mai,jun,jul,ago,set,out,nov,dez"

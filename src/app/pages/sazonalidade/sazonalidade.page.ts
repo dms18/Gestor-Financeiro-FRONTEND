@@ -1,7 +1,9 @@
 import { Component, HostListener } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { AbstractControl, FormBuilder, FormGroup, ValidationErrors, Validators } from '@angular/forms';
 import { AlertController, LoadingController, ToastController } from '@ionic/angular';
 import { SazonalidadeService } from '../../services/sazonalidade.service';
+import { ContaService } from '../../services/conta.service';
+import { Conta } from '../../models/conta';
 import { Sazonalidade } from '../../models/sazonalidade';
 
 @Component({
@@ -11,6 +13,7 @@ import { Sazonalidade } from '../../models/sazonalidade';
 })
 export class SazonalidadePage {
   periodos: Sazonalidade[] = [];
+  contas: Conta[] = [];
   carregando = false;
 
   modalAberto = false;
@@ -35,6 +38,7 @@ export class SazonalidadePage {
   constructor(
     private fb: FormBuilder,
     private sazonalidadeService: SazonalidadeService,
+    private contaService: ContaService,
     private alertController: AlertController,
     private loadingController: LoadingController,
     private toastController: ToastController
@@ -44,12 +48,31 @@ export class SazonalidadePage {
       mesInicio: [1, [Validators.required]],
       mesFim: [12, [Validators.required]],
       descricao: [''],
-      nivelImpacto: ['MEDIO', [Validators.required]]
-    });
+      nivelImpacto: ['MEDIO', [Validators.required]],
+      // reserva de caixa (opcional): data, valor e conta andam juntos
+      dataAlvo: [null],
+      valorNecessario: [null, [Validators.min(0.01)]],
+      contaDebitoId: [null]
+    }, { validators: reservaCompleta });
   }
 
   ionViewWillEnter() {
     this.carregarPeriodos();
+    this.contaService.listar().subscribe({
+      next: (contas) => (this.contas = contas || []),
+      error: () => (this.contas = [])
+    });
+  }
+
+  /** Algum campo da reserva foi preenchido (mostra o botão de limpar). */
+  get reservaPreenchida(): boolean {
+    const v = this.sazonalidadeForm.value;
+    return v.dataAlvo != null || v.valorNecessario != null || v.contaDebitoId != null;
+  }
+
+  limparReserva() {
+    this.sazonalidadeForm.patchValue({ dataAlvo: null, valorNecessario: null, contaDebitoId: null });
+    this.sazonalidadeForm.markAsDirty();
   }
 
   carregarPeriodos(event?: any) {
@@ -85,6 +108,15 @@ export class SazonalidadePage {
     return mesAtual >= periodo.mesInicio || mesAtual <= periodo.mesFim;
   }
 
+  /** Data yyyy-MM-dd no formato dd/MM/yyyy, sem passar por fuso horário. */
+  formatarData(iso?: string | null): string {
+    if (!iso) {
+      return '';
+    }
+    const [a, m, d] = iso.substring(0, 10).split('-');
+    return `${d}/${m}/${a}`;
+  }
+
   corImpacto(nivel: string): string {
     switch (nivel) {
       case 'ALTO': return 'danger';
@@ -101,7 +133,10 @@ export class SazonalidadePage {
       mesInicio: 1,
       mesFim: 12,
       descricao: '',
-      nivelImpacto: 'MEDIO'
+      nivelImpacto: 'MEDIO',
+      dataAlvo: null,
+      valorNecessario: null,
+      contaDebitoId: null
     });
     this.sazonalidadeForm.markAsPristine();
     this.sazonalidadeForm.markAsUntouched();
@@ -115,7 +150,10 @@ export class SazonalidadePage {
       mesInicio: periodo.mesInicio,
       mesFim: periodo.mesFim,
       descricao: periodo.descricao || '',
-      nivelImpacto: periodo.nivelImpacto
+      nivelImpacto: periodo.nivelImpacto,
+      dataAlvo: periodo.dataAlvo ?? null,
+      valorNecessario: periodo.valorNecessario ?? null,
+      contaDebitoId: periodo.contaDebitoId ?? null
     });
     this.sazonalidadeForm.markAsPristine();
     this.sazonalidadeForm.markAsUntouched();
@@ -160,7 +198,13 @@ export class SazonalidadePage {
     const loading = await this.loadingController.create({ message: 'Salvando...' });
     await loading.present();
 
-    const payload: Sazonalidade = this.sazonalidadeForm.value;
+    const valores = this.sazonalidadeForm.value;
+    const payload: Sazonalidade = {
+      ...valores,
+      dataAlvo: valores.dataAlvo ? String(valores.dataAlvo).substring(0, 10) : null, // yyyy-MM-dd
+      valorNecessario: valores.valorNecessario ?? null,
+      contaDebitoId: valores.contaDebitoId ?? null
+    };
     const requisicao = this.editandoId
       ? this.sazonalidadeService.atualizar(this.editandoId, payload)
       : this.sazonalidadeService.criar(payload);
@@ -216,4 +260,11 @@ export class SazonalidadePage {
     });
     await toast.present();
   }
+}
+
+/** Data, caixa necessário e conta para débito: ou os três preenchidos, ou nenhum. */
+function reservaCompleta(grupo: AbstractControl): ValidationErrors | null {
+  const { dataAlvo, valorNecessario, contaDebitoId } = grupo.value;
+  const informados = [dataAlvo, valorNecessario, contaDebitoId].filter(v => v != null && v !== '').length;
+  return informados === 0 || informados === 3 ? null : { reservaIncompleta: true };
 }

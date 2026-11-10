@@ -7,7 +7,7 @@
 <ion-content class="ion-padding">
   <div class="login-container">
     <div class="logo-section">
-      <ion-icon name="wallet" size="large" color="primary" aria-hidden="true"></ion-icon>
+      <img class="logo-app" src="assets/icon/icon-192.png" alt="" width="96" height="96" />
       <h1>Gestor Financeiro</h1>
       <p>Gerencie suas finanças com facilidade</p>
     </div>
@@ -51,6 +51,18 @@
         <span aria-live="polite">{{ loading ? 'Entrando...' : 'Entrar' }}</span>
       </ion-button>
     </form>
+
+    <ion-button
+      *ngIf="biometriaAtiva"
+      expand="block"
+      fill="outline"
+      type="button"
+      class="btn-biometria"
+      (click)="entrarComBiometria()"
+    >
+      <ion-icon slot="start" name="finger-print-outline" aria-hidden="true"></ion-icon>
+      Entrar com biometria
+    </ion-button>
 
     <div class="forgot-link">
       <ion-button fill="clear" size="small" color="primary" (click)="irParaEsqueciSenha()">

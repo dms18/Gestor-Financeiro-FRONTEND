@@ -4,6 +4,7 @@ import { ActionSheetController, AlertController, LoadingController, ToastControl
 import { Camera, CameraResultType, CameraSource } from '@capacitor/camera';
 import { UsuarioService } from '../../services/usuario.service';
 import { AuthService } from '../../services/auth.service';
+import { BiometriaService } from '../../services/biometria.service';
 import { ThemeService, ThemeMode } from '../../services/theme.service';
 import { Usuario } from '../../models/usuario';
 
@@ -16,10 +17,13 @@ export class PerfilPage {
   usuario: Usuario | null = null;
   carregando = false;
   temaMode: ThemeMode = 'auto';
+  biometriaDisponivel = false;
+  biometriaAtiva = false;
 
   constructor(
     private usuarioService: UsuarioService,
     private authService: AuthService,
+    private biometria: BiometriaService,
     private themeService: ThemeService,
     private router: Router,
     private alertController: AlertController,
@@ -31,6 +35,59 @@ export class PerfilPage {
   ionViewWillEnter() {
     this.carregarPerfil();
     this.temaMode = this.themeService.getMode();
+    this.carregarBiometria();
+  }
+
+  private async carregarBiometria() {
+    this.biometriaDisponivel = await this.biometria.disponivel();
+    this.biometriaAtiva = this.biometria.ativa();
+  }
+
+  async onBiometriaChange(ligar: boolean) {
+    if (ligar === this.biometriaAtiva) {
+      return;
+    }
+    if (!ligar) {
+      await this.biometria.desativar();
+      this.biometriaAtiva = false;
+      this.mostrarToast('Biometria desativada');
+      return;
+    }
+    if (!this.usuario?.email) {
+      this.biometriaAtiva = false;
+      return;
+    }
+    const email = this.usuario.email;
+    const alert = await this.alertController.create({
+      header: 'Ativar biometria',
+      message: 'Confirme sua senha para ativar.',
+      inputs: [{ name: 'senha', type: 'password', placeholder: 'Senha' }],
+      buttons: [
+        { text: 'Cancelar', role: 'cancel', handler: () => { this.biometriaAtiva = false; } },
+        {
+          text: 'Ativar',
+          handler: (data) => {
+            this.confirmarAtivacao(email, data?.senha || '');
+            return true;
+          }
+        }
+      ]
+    });
+    await alert.present();
+  }
+
+  private confirmarAtivacao(email: string, senha: string) {
+    // valida a senha no servidor antes de guardá-la no cofre do sistema
+    this.authService.login({ email, senha }).subscribe({
+      next: async () => {
+        this.biometriaAtiva = await this.biometria.ativar(email, senha);
+        this.mostrarToast(this.biometriaAtiva ? 'Biometria ativada' : 'Não foi possível ativar a biometria');
+      },
+      error: () => {
+        this.biometriaAtiva = false;
+        this.mostrarToast('Senha incorreta');
+      }
+    });
   }
 
   onTemaChange(mode: ThemeMode) {

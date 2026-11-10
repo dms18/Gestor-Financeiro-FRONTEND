@@ -35,7 +35,7 @@ export class ContasPage {
       instituicao: [''],
       numeroConta: [''],
       tipo: ['CORRENTE', [Validators.required]],
-      saldo: [0, [Validators.required, Validators.min(0)]],
+      saldo: [null, [Validators.required, Validators.min(0)]],
       tipoPessoa: ['PF', [Validators.required]]
     });
   }
@@ -73,10 +73,15 @@ export class ContasPage {
     });
   }
 
-  /** Saldo atual = saldo inicial + receitas − despesas lançadas nesta conta. */
+  /** Saldo atual = saldo inicial + movimentações até hoje (lançamentos futuros não contam). */
   saldoAtual(conta: Conta): number {
     const r = conta.id != null ? this.resumoPorConta.get(conta.id) : undefined;
-    return r ? conta.saldo + r.receitas - r.despesas : conta.saldo;
+    return r && r.saldoAtual != null ? r.saldoAtual : conta.saldo;
+  }
+
+  /** Ícone do item da lista conforme o vínculo (PF = pessoa, PJ = empresa). */
+  iconeVinculo(tipoPessoa: string): string {
+    return tipoPessoa === 'PJ' ? 'business-outline' : 'person-outline';
   }
 
   rotuloTipo(tipo: string): string {
@@ -95,7 +100,7 @@ export class ContasPage {
       instituicao: '',
       numeroConta: '',
       tipo: 'CORRENTE',
-      saldo: 0,
+      saldo: null, // vazio: o placeholder "0,00" aparece e não há "0" para apagar
       tipoPessoa: 'PF'
     });
     this.contaForm.markAsPristine();

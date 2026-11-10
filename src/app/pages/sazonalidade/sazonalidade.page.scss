@@ -13,3 +13,27 @@ ion-card.ativo {
   justify-content: flex-end;
   margin-top: 8px;
 }
+
+.reserva-form {
+  margin-top: 8px;
+}
+
+.reserva-nota {
+  display: block;
+  padding: 4px 16px 8px;
+  font-size: 0.8125rem;
+  line-height: 1.35;
+}
+
+.reserva-info {
+  display: flex;
+  align-items: flex-start;
+  gap: 6px;
+  font-size: 0.875rem;
+  color: var(--app-text-muted);
+
+  ion-icon {
+    flex: 0 0 auto;
+    margin-top: 2px;
+  }
+}
