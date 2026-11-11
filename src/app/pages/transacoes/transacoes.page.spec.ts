@@ -5,6 +5,7 @@ import { AlertController, IonicModule, LoadingController, ToastController } from
 import { of, throwError } from 'rxjs';
 import { TransacoesPage } from './transacoes.page';
 import { SharedModule } from '../../shared/shared.module';
+import { AuthService } from '../../services/auth.service';
 import { TransacaoService } from '../../services/transacao.service';
 import { CategoriaService } from '../../services/categoria.service';
 import { ContaService } from '../../services/conta.service';
@@ -15,6 +16,7 @@ describe('TransacoesPage', () => {
   let fixture: ComponentFixture<TransacoesPage>;
   let page: TransacoesPage;
   let transacaoService: jasmine.SpyObj<TransacaoService>;
+  let categoriaService: jasmine.SpyObj<CategoriaService>;
   let overlays: ReturnType<typeof simularOverlays>;
 
   const semEspacoDuro = (s: string | null) => (s ?? '').replace(/ /g, ' ');
@@ -26,8 +28,9 @@ describe('TransacoesPage', () => {
     transacaoService.atualizar.and.returnValue(of({}));
     transacaoService.deletar.and.returnValue(of(null));
 
-    const categoriaService = jasmine.createSpyObj('CategoriaService', ['listar']);
+    categoriaService = jasmine.createSpyObj('CategoriaService', ['listar', 'criar']);
     categoriaService.listar.and.returnValue(of([]));
+    categoriaService.criar.and.returnValue(of({ id: 7, nome: 'Fornecedores', tipo: 'DESPESA' }));
     const contaService = jasmine.createSpyObj('ContaService', ['listar']);
     contaService.listar.and.returnValue(of([{ id: 1, nome: 'Principal' }]));
 
@@ -37,7 +40,8 @@ describe('TransacoesPage', () => {
       providers: [
         { provide: TransacaoService, useValue: transacaoService },
         { provide: CategoriaService, useValue: categoriaService },
-        { provide: ContaService, useValue: contaService }
+        { provide: ContaService, useValue: contaService },
+        { provide: AuthService, useValue: { perfilAmbos: true, vinculoPadrao: 'PF' } }
       ]
     }).compileComponents();
 
@@ -139,6 +143,20 @@ describe('TransacoesPage', () => {
       page.abrirModalNova();
       expect(page.parcelado).toBeFalse();
       expect(page.transacaoForm.get('numeroParcelas')!.value).toBeNull();
+    });
+  });
+
+  describe('nova categoria no formulário', () => {
+    it('cria com o tipo da transação, seleciona a nova e mantém o que foi digitado', () => {
+      page.abrirModalNova();
+      page.transacaoForm.patchValue({ descricao: 'Compra', valor: 50, tipo: 'DESPESA' });
+
+      (page as any).criarCategoria('Fornecedores', 'DESPESA');
+
+      expect(categoriaService.criar).toHaveBeenCalledWith({ nome: 'Fornecedores', tipo: 'DESPESA', cor: '#0f766e' });
+      expect(page.transacaoForm.value.categoriaId).toBe(7);
+      expect(page.transacaoForm.value.descricao).toBe('Compra');
+      expect(page.categoriasDoTipo.some(c => c.id === 7)).toBeTrue();
     });
   });
 

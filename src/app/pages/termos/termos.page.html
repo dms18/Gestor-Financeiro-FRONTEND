@@ -54,12 +54,19 @@
       </li>
       <li>
         <strong>Dados financeiros fornecidos por você:</strong> contas, saldos, categorias,
-        transações (receitas/despesas), períodos de sazonalidade e ideias de investimento.
+        transações (receitas/despesas, inclusive parceladas), períodos de sazonalidade e ideias de
+        investimento.
+      </li>
+      <li>
+        <strong>Dados de verificação:</strong> ao recuperar a senha, seu e-mail recebe um código
+        temporário de 6 dígitos (válido por 15 minutos); guardamos apenas o <em>hash</em> do código,
+        nunca o código em si. Para limitar tentativas abusivas, também registramos o e-mail e o endereço
+        IP associados a tentativas de login e de uso de código.
       </li>
       <li>
         <strong>Dados técnicos e de uso:</strong> registros de acesso, logs de erro e dados
-        de telemetria (rastreamento de requisições) coletados para segurança, diagnóstico e
-        melhoria do serviço.
+        de telemetria (rastreamento de requisições e relatórios de erro) coletados para
+        segurança, diagnóstico e melhoria do serviço.
       </li>
     </ul>
 
@@ -85,8 +92,10 @@
     <p>
       O Aplicativo <strong>não vende</strong> seus dados pessoais. Para operar, pode utilizar
       prestadores de serviço (operadores) que tratam dados em nome do controlador, como
-      provedores de infraestrutura e de observabilidade (por exemplo, serviço de telemetria
-      do <em>Microsoft Azure Application Insights</em>, que pode processar dados técnicos/logs).
+      provedores de infraestrutura (servidor e envio de e-mails), de monitoramento de erros
+      (<em>Sentry</em>, que recebe relatórios técnicos de falhas do aplicativo e da API) e, quando
+      habilitado, de telemetria (<em>Microsoft Azure Application Insights</em>), que podem processar
+      dados técnicos e logs.
       Esses terceiros ficam obrigados a tratar os dados apenas conforme as finalidades aqui
       descritas e a legislação aplicável.
     </p>
@@ -94,7 +103,9 @@
     <h2>7. Armazenamento e Segurança</h2>
     <ul>
       <li>Senhas nunca são armazenadas em texto puro (utiliza-se <em>hash bcrypt</em>).</li>
-      <li>O acesso é autenticado por token JWT, guardado localmente no seu dispositivo.</li>
+      <li>O acesso é autenticado por token JWT, guardado localmente no seu dispositivo; ao redefinir a senha, as sessões já abertas são encerradas.</li>
+      <li>A comunicação entre o aplicativo e o servidor usa HTTPS.</li>
+      <li>Há limite de tentativas de login e de código de recuperação para dificultar acessos indevidos.</li>
       <li>Adotam-se medidas técnicas e administrativas razoáveis para proteger os dados.</li>
       <li>Nenhum sistema é totalmente imune a incidentes; em caso de incidente relevante, os titulares e a ANPD poderão ser comunicados nos termos da lei.</li>
     </ul>
@@ -122,7 +133,10 @@
     <p>
       O Aplicativo utiliza armazenamento local (<em>localStorage</em>) para guardar o token de
       sessão e preferências, viabilizando sua permanência conectado. Esses dados podem ser
-      removidos ao sair da conta ou limpar os dados do navegador/aplicativo.
+      removidos ao sair da conta ou limpar os dados do navegador/aplicativo. Se você ativar o
+      login por biometria no aplicativo, suas credenciais ficam guardadas no cofre seguro do próprio
+      aparelho (Keystore/Keychain) e não são enviadas a terceiros; você pode desativar a opção a
+      qualquer momento.
     </p>
 
     <h2>11. Menores de Idade</h2>

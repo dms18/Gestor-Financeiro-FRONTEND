@@ -17,13 +17,19 @@ export class TransacaoService {
     return this.api.get<any[]>(endpoint);
   }
 
-  obterResumo(tipoPessoa?: string, mes?: number, ano?: number): Observable<any> {
+  obterResumo(tipoPessoa?: string, mes?: number, ano?: number, inicio?: string, fim?: string): Observable<any> {
     const params: string[] = [];
     if (tipoPessoa) {
       params.push(`tipoPessoa=${tipoPessoa}`);
     }
     if (mes && ano) {
       params.push(`mes=${mes}`, `ano=${ano}`);
+    }
+    if (inicio) {
+      params.push(`inicio=${inicio}`);
+    }
+    if (fim) {
+      params.push(`fim=${fim}`);
     }
     const endpoint = '/transacoes/resumo' + (params.length ? '?' + params.join('&') : '');
     return this.api.get<any>(endpoint);

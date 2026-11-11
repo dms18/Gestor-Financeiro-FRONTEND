@@ -35,6 +35,10 @@ export class AuthService {
     return this.http.post<{ message: string }>(`${this.apiUrl}/esqueci-senha`, { email });
   }
 
+  verificarCodigo(email: string, codigo: string): Observable<{ message: string }> {
+    return this.http.post<{ message: string }>(`${this.apiUrl}/verificar-codigo`, { email, codigo });
+  }
+
   redefinirSenha(request: { email: string; codigo: string; novaSenha: string }): Observable<{ message: string }> {
     return this.http.post<{ message: string }>(`${this.apiUrl}/redefinir-senha`, request);
   }
@@ -79,5 +83,19 @@ export class AuthService {
 
   getUsuarioAtual(): Observable<Usuario | null> {
     return this.usuario$;
+  }
+
+  /**
+   * O perfil do usuário define se o app mostra PF, PJ ou os dois (abas e campos de vínculo).
+   * Sem perfil conhecido, mostra os dois (comportamento anterior).
+   */
+  get perfilAmbos(): boolean {
+    const p = this.usuarioSubject.value?.perfil;
+    return p !== 'PF' && p !== 'PJ';
+  }
+
+  /** Vínculo único do usuário (PF ou PJ) quando o perfil não é AMBOS; senão PF. */
+  get vinculoPadrao(): 'PF' | 'PJ' {
+    return this.usuarioSubject.value?.perfil === 'PJ' ? 'PJ' : 'PF';
   }
 }

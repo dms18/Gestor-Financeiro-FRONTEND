@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import { buildInfo } from '../../../environments/build-info';
 
 /** Versão do app. Atualize ao publicar uma nova versão. */
-export const APP_VERSION = '1.0.0';
+export const APP_VERSION = '1.1.0';
 
 @Component({
   selector: 'app-versao-badge',

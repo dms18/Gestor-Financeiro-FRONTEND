@@ -5,6 +5,7 @@ import { of } from 'rxjs';
 import { ContasPage } from './contas.page';
 import { SharedModule } from '../../shared/shared.module';
 import { ContaService } from '../../services/conta.service';
+import { AuthService } from '../../services/auth.service';
 import { TransacaoService } from '../../services/transacao.service';
 import { Conta } from '../../models/conta';
 import { simularOverlays } from '../../testing/ionic-fakes';
@@ -32,7 +33,8 @@ describe('ContasPage', () => {
       imports: [IonicModule.forRoot(), FormsModule, ReactiveFormsModule, SharedModule],
       providers: [
         { provide: ContaService, useValue: contaService },
-        { provide: TransacaoService, useValue: transacaoService }
+        { provide: TransacaoService, useValue: transacaoService },
+        { provide: AuthService, useValue: { perfilAmbos: true, vinculoPadrao: 'PF' } }
       ]
     }).compileComponents();
 

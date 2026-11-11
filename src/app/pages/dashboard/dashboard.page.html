@@ -2,7 +2,7 @@
   <ion-toolbar color="primary">
     <ion-title>Dashboard</ion-title>
   </ion-toolbar>
-  <ion-toolbar color="primary">
+  <ion-toolbar color="primary" *ngIf="mostrarAbasVinculo">
     <ion-segment [(ngModel)]="filtroTipoPessoa" (ionChange)="onFiltroChange()">
       <ion-segment-button value="">
         <ion-label>Geral</ion-label>
@@ -30,7 +30,29 @@
     <ion-segment-button value="mes"><ion-label>Este mês</ion-label></ion-segment-button>
     <ion-segment-button value="anterior"><ion-label>Anterior</ion-label></ion-segment-button>
     <ion-segment-button value="tudo"><ion-label>Tudo</ion-label></ion-segment-button>
+    <ion-segment-button value="personalizado"><ion-label>Personalizado</ion-label></ion-segment-button>
   </ion-segment>
+
+  <!-- Filtro específico: um dia ou um período -->
+  <div class="filtro-personalizado ion-padding-horizontal" *ngIf="periodo === 'personalizado'">
+    <ion-segment [(ngModel)]="modoPersonalizado" (ionChange)="onFiltroChange()" aria-label="Tipo de filtro personalizado">
+      <ion-segment-button value="dia"><ion-label>Dia</ion-label></ion-segment-button>
+      <ion-segment-button value="periodo"><ion-label>Período</ion-label></ion-segment-button>
+    </ion-segment>
+
+    <div class="datas">
+      <ion-item lines="none">
+        <ion-label position="stacked">{{ modoPersonalizado === 'dia' ? 'Data' : 'De' }}</ion-label>
+        <ion-datetime [(ngModel)]="dataInicio" (ionChange)="onDataInicioChange()" displayFormat="DD/MM/YYYY" max="2100"
+          cancelText="Cancelar" doneText="OK" [monthNames]="meses" [monthShortNames]="mesesCurtos"></ion-datetime>
+      </ion-item>
+      <ion-item lines="none" *ngIf="modoPersonalizado === 'periodo'">
+        <ion-label position="stacked">Até</ion-label>
+        <ion-datetime [(ngModel)]="dataFim" (ionChange)="onFiltroChange()" displayFormat="DD/MM/YYYY" max="2100"
+          cancelText="Cancelar" doneText="OK" [monthNames]="meses" [monthShortNames]="mesesCurtos"></ion-datetime>
+      </ion-item>
+    </div>
+  </div>
 
   <!-- Cards de resumo -->
   <div class="cards-resumo ion-padding-horizontal">
@@ -174,7 +196,7 @@
       ></ion-icon>
       <ion-label>
         <h2><span class="sr-only">{{ t.tipo === 'RECEITA' ? 'Receita: ' : 'Despesa: ' }}</span>{{ t.descricao }}</h2>
-        <p>{{ t.data | date:'dd/MM/yyyy' }} • {{ t.tipoPessoa }}</p>
+        <p>{{ t.data | date:'dd/MM/yyyy' }}{{ mostrarAbasVinculo ? ' • ' + t.tipoPessoa : '' }}</p>
       </ion-label>
       <ion-text slot="end" [color]="t.tipo === 'RECEITA' ? 'success' : 'danger'">
         <strong>{{ t.tipo === 'RECEITA' ? '+' : '-' }} {{ t.valor | currency:'BRL':'symbol':'1.2-2' }}</strong>

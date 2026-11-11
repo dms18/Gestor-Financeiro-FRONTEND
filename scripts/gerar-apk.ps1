@@ -3,7 +3,7 @@
   Gera o APK debug do app (configuração "mobile": API por HTTPS em financasmei.app.br).
 
 .EXAMPLE
-  .\scripts\gerar-apk.ps1 -BaixarJdk -Destino C:\TCC\deploy\GestorFinanceiro-debug.apk
+  .\scripts\gerar-apk.ps1 -BaixarJdk -Destino C:\TCC\deploy\FinancasMEI.apk
 
 .NOTES
   O Gradle 7.4 do projeto só roda até o JDK 17. -BaixarJdk baixa o Temurin 17 para %TEMP%\jdk17-gestor
@@ -39,10 +39,18 @@ if (-not $JdkHome) {
 
 # 2) Bundle Angular em modo mobile (webpack 4 precisa do provider legado no Node recente)
 Set-Location $front
+# grava o commit e a data no badge de versão (o Dockerfile faz o mesmo no build web); restaurado ao final
+$sha = (git rev-parse HEAD).Trim()
+$infoPath = Join-Path $front 'src\environments\build-info.ts'
+$infoOriginal = Get-Content $infoPath -Raw
+$data = Get-Date -Format s
+Set-Content -Path $infoPath -Value "export const buildInfo = { sha: '$sha', date: '$data' };" -Encoding utf8
 Write-Output '== ng build --configuration mobile'
 $env:NODE_OPTIONS = '--openssl-legacy-provider'
 npx ng build --configuration mobile
-if ($LASTEXITCODE -ne 0) { throw 'ng build falhou' }
+$ngCodigo = $LASTEXITCODE
+Set-Content -Path $infoPath -Value $infoOriginal -NoNewline -Encoding utf8
+if ($ngCodigo -ne 0) { throw 'ng build falhou' }
 Remove-Item Env:NODE_OPTIONS
 
 # 3) Sincronizar com o Android e compilar

@@ -1,5 +1,6 @@
 import { Component, HostListener } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { Router } from '@angular/router';
 import { AlertController, LoadingController, ToastController } from '@ionic/angular';
 import { InvestimentoService } from '../../services/investimento.service';
 import { Investimento, StatusInvestimento } from '../../models/investimento';
@@ -31,7 +32,8 @@ export class InvestimentosPage {
     private investimentoService: InvestimentoService,
     private alertController: AlertController,
     private loadingController: LoadingController,
-    private toastController: ToastController
+    private toastController: ToastController,
+    private router: Router
   ) {
     this.investimentoForm = this.fb.group({
       titulo: ['', [Validators.required]],
@@ -69,6 +71,14 @@ export class InvestimentosPage {
 
   get filtrados(): Investimento[] {
     return this.todos.filter(i => i.status === this.filtroStatus);
+  }
+
+  /** Investimento aprovado: leva descrição e valor para uma nova transação (despesa) já preenchida. */
+  lancarEmTransacoes(inv: Investimento) {
+    const queryParams: { descricao: string; valor?: number } = { descricao: inv.titulo };
+    if (inv.valorEstimado != null) { queryParams.valor = inv.valorEstimado; }
+    if (inv.descricao) { queryParams.descricao = `${inv.titulo} - ${inv.descricao}`.slice(0, 255); }
+    this.router.navigate(['/tabs/transacoes'], { queryParams });
   }
 
   corPrioridade(prioridade: string): string {

@@ -14,7 +14,19 @@ import { Usuario } from '../../models/usuario';
 export class DashboardPage {
   usuario: Usuario | null = null;
   filtroTipoPessoa: '' | TipoPessoa = '';
-  periodo: 'mes' | 'anterior' | 'tudo' = 'mes';
+  periodo: 'mes' | 'anterior' | 'tudo' | 'personalizado' = 'mes';
+
+  /** Filtro personalizado: um dia específico ou um período (datas yyyy-MM-dd). */
+  modoPersonalizado: 'dia' | 'periodo' = 'dia';
+  dataInicio = DashboardPage.hojeIso();
+  dataFim = DashboardPage.hojeIso();
+  readonly meses = 'janeiro,fevereiro,março,abril,maio,junho,julho,agosto,setembro,outubro,novembro,dezembro';
+  readonly mesesCurtos = 'jan,fev,mar,abr,mai,jun,jul,ago,set,out,nov,dez';
+
+  private static hojeIso(): string {
+    const d = new Date();
+    return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+  }
 
   resumo: ResumoFinanceiro = {
     totalReceitas: 0,
@@ -35,13 +47,18 @@ export class DashboardPage {
     private authService: AuthService
   ) {}
 
+  /** Abas PF/PJ só aparecem para perfil AMBOS. */
+  get mostrarAbasVinculo(): boolean {
+    return this.authService.perfilAmbos;
+  }
+
   ionViewWillEnter() {
     this.authService.getUsuarioAtual().subscribe(u => {
       this.usuario = u;
       // Aplica a interface inicial preferida apenas uma vez (ao entrar após o login).
       // Depois, respeita o filtro que o usuário selecionar durante a sessão.
       if (!this.interfaceAplicada && u) {
-        this.filtroTipoPessoa = this.mapInterfaceParaFiltro(u.interfaceInicial);
+        this.filtroTipoPessoa = this.authService.perfilAmbos ? this.mapInterfaceParaFiltro(u.interfaceInicial) : '';
         this.interfaceAplicada = true;
       }
     });
@@ -64,7 +81,8 @@ export class DashboardPage {
     const tipoPessoa = this.filtroTipoPessoa || undefined;
 
     const ref = this.referenciaPeriodo();
-    this.transacaoService.obterResumo(tipoPessoa, ref?.mes, ref?.ano).subscribe({
+    const intervalo = this.intervaloPersonalizado();
+    this.transacaoService.obterResumo(tipoPessoa, ref?.mes, ref?.ano, intervalo?.inicio, intervalo?.fim).subscribe({
       next: (resumo) => {
         this.resumo = resumo || this.resumo;
       },
@@ -74,6 +92,7 @@ export class DashboardPage {
     this.transacaoService.listar(tipoPessoa).subscribe({
       next: (transacoes) => {
         this.ultimasTransacoes = (transacoes || [])
+          .filter(t => !intervalo || this.dentroDoIntervalo(t.data, intervalo))
           .sort((a, b) => (b.data || '').localeCompare(a.data || ''))
           .slice(0, 5);
         this.carregando = false;
@@ -101,9 +120,33 @@ export class DashboardPage {
     });
   }
 
+  /** Ao escolher a data inicial, a final nunca fica antes dela (e, no modo dia, é a mesma). */
+  onDataInicioChange() {
+    this.dataInicio = (this.dataInicio || '').substring(0, 10);
+    if (!this.dataFim || this.dataFim.substring(0, 10) < this.dataInicio) {
+      this.dataFim = this.dataInicio;
+    }
+    this.onFiltroChange();
+  }
+
+  private dentroDoIntervalo(data: string | undefined, intervalo: { inicio: string; fim: string }): boolean {
+    const dia = (data || '').substring(0, 10);
+    return dia >= intervalo.inicio && dia <= intervalo.fim;
+  }
+
+  /** Intervalo do filtro personalizado (inclusivo); null nos demais períodos. */
+  private intervaloPersonalizado(): { inicio: string; fim: string } | null {
+    if (this.periodo !== 'personalizado' || !this.dataInicio) {
+      return null;
+    }
+    const inicio = this.dataInicio.substring(0, 10);
+    const fimBruto = this.modoPersonalizado === 'dia' ? inicio : (this.dataFim || inicio).substring(0, 10);
+    return { inicio, fim: fimBruto < inicio ? inicio : fimBruto };
+  }
+
   /** Mês/ano do período escolhido; null = todo o histórico. */
   private referenciaPeriodo(): { mes: number; ano: number } | null {
-    if (this.periodo === 'tudo') {
+    if (this.periodo === 'tudo' || this.periodo === 'personalizado') {
       return null;
     }
     const data = new Date();
@@ -115,6 +158,12 @@ export class DashboardPage {
   }
 
   get rotuloPeriodo(): string {
+    const intervalo = this.intervaloPersonalizado();
+    if (intervalo) {
+      return intervalo.inicio === intervalo.fim
+        ? this.formatarData(intervalo.inicio)
+        : `${this.formatarData(intervalo.inicio)} a ${this.formatarData(intervalo.fim)}`;
+    }
     const ref = this.referenciaPeriodo();
     if (!ref) {
       return 'todo o período';

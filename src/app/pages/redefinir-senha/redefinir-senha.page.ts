@@ -13,6 +13,7 @@ export class RedefinirSenhaPage implements OnInit {
   form: FormGroup;
   loading = false;
   mostrarSenha = false;
+  codigoVerificado = false;
 
   constructor(
     private fb: FormBuilder,
@@ -43,7 +44,40 @@ export class RedefinirSenhaPage implements OnInit {
     return senha === confirmacao ? null : { senhasNaoIguais: true };
   }
 
+  /** Etapa 1: só libera os campos de nova senha depois que o servidor confirmar o código. */
+  async verificarCodigo() {
+    const email = this.form.get('email');
+    const codigo = this.form.get('codigo');
+    if (!email || !codigo || email.invalid || codigo.invalid) {
+      email?.markAsTouched();
+      codigo?.markAsTouched();
+      this.mostrarToast('Informe o e-mail e o código de 6 dígitos');
+      return;
+    }
+    const loading = await this.loadingController.create({ message: 'Verificando código...' });
+    await loading.present();
+    this.authService.verificarCodigo(email.value.trim(), codigo.value).subscribe({
+      next: () => {
+        loading.dismiss();
+        this.codigoVerificado = true;
+      },
+      error: (error) => {
+        loading.dismiss();
+        this.mostrarToast(error?.error?.message || 'Não foi possível verificar o código. Tente novamente.');
+      }
+    });
+  }
+
+  /** Volta para a etapa do código (ex.: para corrigir e-mail ou pedir outro). */
+  alterarCodigo() {
+    this.codigoVerificado = false;
+    this.form.patchValue({ novaSenha: '', confirmacaoSenha: '' });
+  }
+
   async redefinir() {
+    if (!this.codigoVerificado) {
+      return this.verificarCodigo();
+    }
     if (this.form.invalid) {
       this.form.markAllAsTouched();
       this.mostrarToast('Por favor, preencha todos os campos corretamente');
@@ -62,6 +96,8 @@ export class RedefinirSenhaPage implements OnInit {
       },
       error: (error) => {
         loading.dismiss();
+        // código pode ter expirado/esgotado tentativas entre as etapas: volta para a verificação
+        if (error?.status === 400) { this.codigoVerificado = false; }
         this.mostrarToast(error?.error?.message || 'Não foi possível redefinir a senha. Tente novamente.');
       }
     });

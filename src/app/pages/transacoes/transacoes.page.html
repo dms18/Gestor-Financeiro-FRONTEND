@@ -2,7 +2,7 @@
   <ion-toolbar color="primary">
     <ion-title>Transações</ion-title>
   </ion-toolbar>
-  <ion-toolbar color="primary">
+  <ion-toolbar color="primary" *ngIf="mostrarAbasVinculo">
     <ion-segment [(ngModel)]="filtroTipoPessoa" (ionChange)="onFiltroChange()">
       <ion-segment-button value="">
         <ion-label>Todas</ion-label>
@@ -54,7 +54,7 @@
             </ion-badge>
           </h2>
           <p>{{ nomeCategoria(t.categoriaId) }} • {{ nomeConta(t.contaId) }}</p>
-          <p>{{ t.data | date:'dd/MM/yyyy' }} • {{ t.tipoPessoa }}</p>
+          <p>{{ t.data | date:'dd/MM/yyyy' }}{{ mostrarAbasVinculo ? ' • ' + t.tipoPessoa : '' }}</p>
         </ion-label>
         <ion-text slot="end" [color]="t.tipo === 'RECEITA' ? 'success' : 'danger'">
           <strong>{{ t.tipo === 'RECEITA' ? '+' : '-' }} {{ t.valor | currency:'BRL':'symbol':'1.2-2' }}</strong>
@@ -98,10 +98,7 @@
               As alterações valem só para ela.
             </ion-note>
 
-            <ion-item>
-              <ion-label position="stacked">{{ parcelado ? 'Montante total *' : 'Valor *' }}</ion-label>
-              <ion-input type="number" inputmode="decimal" formControlName="valor" placeholder="0,00"></ion-input>
-            </ion-item>
+            <app-input-moeda [rotulo]="parcelado ? 'Montante total *' : 'Valor *'" formControlName="valor"></app-input-moeda>
             <app-campo-erro [control]="transacaoForm.get('valor')"></app-campo-erro>
 
             <!-- Parcelamento: só na criação -->
@@ -125,7 +122,7 @@
 
             <ion-item>
               <ion-label position="stacked">{{ parcelado ? 'Data da 1ª parcela *' : 'Data *' }}</ion-label>
-              <ion-datetime formControlName="data" displayFormat="DD/MM/YYYY" cancelText="Cancelar" doneText="OK"
+              <ion-datetime formControlName="data" displayFormat="DD/MM/YYYY" [max]="anoMaximo" cancelText="Cancelar" doneText="OK"
                 monthNames="janeiro,fevereiro,março,abril,maio,junho,julho,agosto,setembro,outubro,novembro,dezembro"
                 monthShortNames="jan,fev,mar,abr,mai,jun,jul,ago,set,out,nov,dez"
                 dayNames="domingo,segunda-feira,terça-feira,quarta-feira,quinta-feira,sexta-feira,sábado"
@@ -140,7 +137,7 @@
               </ion-select>
             </ion-item>
 
-            <ion-item>
+            <ion-item *ngIf="mostrarAbasVinculo">
               <ion-label position="stacked">Pessoa *</ion-label>
               <ion-select cancelText="Cancelar" okText="OK" formControlName="tipoPessoa" interface="alert">
                 <ion-select-option value="PF">Pessoa Física</ion-select-option>
@@ -153,10 +150,14 @@
               <ion-select cancelText="Cancelar" okText="OK" formControlName="categoriaId" interface="alert" placeholder="Selecione">
                 <ion-select-option *ngFor="let c of categoriasDoTipo" [value]="c.id">{{ c.nome }}</ion-select-option>
               </ion-select>
+              <ion-button slot="end" fill="clear" size="small" type="button" (click)="novaCategoria()" aria-label="Criar nova categoria">
+                <ion-icon slot="start" name="add" aria-hidden="true"></ion-icon>
+                Nova
+              </ion-button>
             </ion-item>
             <ion-note *ngIf="categoriasDoTipo.length === 0" class="dica-categoria">
               Nenhuma categoria de {{ transacaoForm.value.tipo === 'RECEITA' ? 'receita' : 'despesa' }} cadastrada.
-              <a href="javascript:void(0)" (click)="irParaCategorias()">Criar categorias</a>
+              Toque em "Nova" para criar agora.
             </ion-note>
 
             <ion-item>

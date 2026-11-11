@@ -21,10 +21,13 @@ export class ModalA11yDirective implements OnInit, OnDestroy {
     // Foco no próprio painel (não no 1º campo): leitores de tela anunciam o diálogo,
     // o teclado virtual não abre sozinho e nenhum campo é marcado como "tocado".
     this.temporizador = setTimeout(() => painel.focus({ preventScroll: true }), 280);
+    // esconde a barra de abas: com o teclado virtual ela ficava por cima dos campos de baixo e do botão Salvar
+    document.body.classList.add('form-aberto');
   }
 
   ngOnDestroy() {
     clearTimeout(this.temporizador);
+    document.body.classList.remove('form-aberto');
     const anterior = this.elementoAnterior;
     if (anterior && document.body.contains(anterior)) {
       anterior.focus({ preventScroll: true });

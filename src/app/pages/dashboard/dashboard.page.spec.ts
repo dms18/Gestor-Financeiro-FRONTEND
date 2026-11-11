@@ -45,7 +45,7 @@ describe('DashboardPage', () => {
     sazonalidadeService = jasmine.createSpyObj('SazonalidadeService', ['obterAletasAtivos', 'obterReservas']);
     sazonalidadeService.obterAletasAtivos.and.returnValue(of([]));
     sazonalidadeService.obterReservas.and.returnValue(of([]));
-    const auth = { getUsuarioAtual: () => new BehaviorSubject(null) };
+    const auth = { getUsuarioAtual: () => new BehaviorSubject(null), perfilAmbos: true, vinculoPadrao: 'PF' };
 
     await TestBed.configureTestingModule({
       declarations: [DashboardPage],

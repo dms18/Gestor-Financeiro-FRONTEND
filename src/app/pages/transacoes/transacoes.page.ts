@@ -1,6 +1,6 @@
 import { Component, HostListener } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { AlertController, LoadingController, ToastController } from '@ionic/angular';
 import { TransacaoService } from '../../services/transacao.service';
 import { CategoriaService } from '../../services/categoria.service';
@@ -8,6 +8,7 @@ import { ContaService } from '../../services/conta.service';
 import { Transacao, TipoPessoa, EscopoExclusao } from '../../models/transacao';
 import { Categoria } from '../../models/categoria';
 import { Conta } from '../../models/conta';
+import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'app-transacoes',
@@ -36,7 +37,9 @@ export class TransacoesPage {
     private alertController: AlertController,
     private loadingController: LoadingController,
     private toastController: ToastController,
-    private router: Router
+    private router: Router,
+    private route: ActivatedRoute,
+    private authService: AuthService
   ) {
     this.transacaoForm = this.fb.group({
       descricao: ['', [Validators.required]],
@@ -75,6 +78,9 @@ export class TransacoesPage {
     return this.categorias.filter(c => !c.tipo || c.tipo === tipo);
   }
 
+  /** O servidor aceita datas até 10 anos à frente. */
+  readonly anoMaximo = String(new Date().getFullYear() + 10);
+
   get parcelado(): boolean {
     return !!this.transacaoForm.get('parcelado')?.value;
   }
@@ -95,14 +101,70 @@ export class TransacoesPage {
       : `${n - 1} parcelas de ${moeda(parcela)} + a última de ${moeda(ultima)}`;
   }
 
-  irParaCategorias() {
-    this.modalAberto = false;
-    this.router.navigate(['/tabs/categorias']);
+  /**
+   * Cria uma categoria sem sair do formulário: o tipo (receita/despesa) é o da transação em edição
+   * e a nova categoria já fica selecionada, sem perder o que foi digitado.
+   */
+  async novaCategoria() {
+    const tipo = this.transacaoForm.get('tipo')?.value === 'RECEITA' ? 'RECEITA' : 'DESPESA';
+    const alert = await this.alertController.create({
+      header: `Nova categoria de ${tipo === 'RECEITA' ? 'receita' : 'despesa'}`,
+      inputs: [{ name: 'nome', type: 'text', placeholder: 'Ex: Fornecedores', attributes: { maxlength: 60 } }],
+      buttons: [
+        { text: 'Cancelar', role: 'cancel' },
+        {
+          text: 'Criar',
+          handler: (dados: { nome?: string }) => {
+            const nome = (dados?.nome || '').trim();
+            if (!nome) { return false; } // mantém o alerta aberto
+            this.criarCategoria(nome, tipo);
+            return true;
+          }
+        }
+      ]
+    });
+    await alert.present();
+  }
+
+  private criarCategoria(nome: string, tipo: 'RECEITA' | 'DESPESA') {
+    this.categoriaService.criar({ nome, tipo, cor: '#0f766e' }).subscribe({
+      next: (criada) => {
+        this.categorias = [...this.categorias, criada];
+        this.transacaoForm.patchValue({ categoriaId: criada?.id ?? null });
+        this.transacaoForm.get('categoriaId')?.markAsDirty();
+        this.mostrarToast('Categoria criada');
+      },
+      error: (erro) => this.mostrarToast(erro?.error?.message || 'Erro ao criar categoria')
+    });
+  }
+
+  /** Abas PF/PJ e o campo "Pessoa" só fazem sentido para quem tem perfil AMBOS. */
+  get mostrarAbasVinculo(): boolean {
+    return this.authService.perfilAmbos;
   }
 
   ionViewWillEnter() {
+    if (!this.authService.perfilAmbos) { this.filtroTipoPessoa = ''; }
     this.carregarDadosAuxiliares();
     this.carregarTransacoes();
+    this.aplicarPrefillInvestimento();
+  }
+
+  /** Vindo de um investimento aprovado: abre o formulário de nova transação já preenchido. */
+  private aplicarPrefillInvestimento() {
+    const q = this.route.snapshot.queryParamMap;
+    const descricao = q.get('descricao');
+    if (descricao === null) { return; }
+    const valor = Number(q.get('valor'));
+    this.abrirModalNova();
+    this.transacaoForm.patchValue({
+      descricao,
+      valor: valor > 0 ? valor : null,
+      tipo: 'DESPESA'
+    });
+    this.transacaoForm.markAsDirty();
+    // limpa os parâmetros para não reabrir o formulário ao voltar para esta aba
+    this.router.navigate([], { relativeTo: this.route, queryParams: {}, replaceUrl: true });
   }
 
   carregarDadosAuxiliares() {
@@ -161,7 +223,7 @@ export class TransacoesPage {
       valor: null,
       data: new Date().toISOString(),
       tipo: 'RECEITA',
-      tipoPessoa: 'PF',
+      tipoPessoa: this.authService.vinculoPadrao,
       categoriaId: null,
       contaId: null,
       parcelado: false,

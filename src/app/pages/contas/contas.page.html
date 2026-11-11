@@ -2,7 +2,7 @@
   <ion-toolbar color="primary">
     <ion-title>Contas Bancárias</ion-title>
   </ion-toolbar>
-  <ion-toolbar color="primary">
+  <ion-toolbar color="primary" *ngIf="mostrarAbasVinculo">
     <ion-segment [(ngModel)]="filtroTipoPessoa">
       <ion-segment-button value="">
         <ion-label>Todas</ion-label>
@@ -45,7 +45,7 @@
           <h2>{{ c.nome }}</h2>
           <p *ngIf="c.instituicao">{{ c.instituicao }}</p>
           <p *ngIf="c.numeroConta">Conta: {{ c.numeroConta }}</p>
-          <p>{{ rotuloTipo(c.tipo) }} • {{ c.tipoPessoa }} • inicial {{ c.saldo | currency:'BRL':'symbol':'1.2-2' }}</p>
+          <p>{{ rotuloTipo(c.tipo) }} • {{ mostrarAbasVinculo ? c.tipoPessoa + ' • ' : '' }}inicial {{ c.saldo | currency:'BRL':'symbol':'1.2-2' }}</p>
         </ion-label>
         <ion-text slot="end" class="saldo-conta">
           <strong>{{ saldoAtual(c) | currency:'BRL':'symbol':'1.2-2' }}</strong>
@@ -104,13 +104,10 @@
               </ion-select>
             </ion-item>
 
-            <ion-item>
-              <ion-label position="stacked">Saldo inicial *</ion-label>
-              <ion-input type="number" formControlName="saldo" placeholder="0,00"></ion-input>
-            </ion-item>
+            <app-input-moeda rotulo="Saldo inicial *" formControlName="saldo"></app-input-moeda>
             <app-campo-erro [control]="contaForm.get('saldo')"></app-campo-erro>
 
-            <ion-item>
+            <ion-item *ngIf="mostrarAbasVinculo">
               <ion-label position="stacked">Vínculo *</ion-label>
               <ion-select cancelText="Cancelar" okText="OK" formControlName="tipoPessoa" interface="alert">
                 <ion-select-option value="PF">Pessoa Física</ion-select-option>

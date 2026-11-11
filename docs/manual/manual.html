@@ -36,7 +36,7 @@
   <img class="logo" src="../../src/assets/icon/icon-192.png" alt="">
   <h1>Finanças MEI</h1>
   <div class="sub">Manual do Usuário</div>
-  <div class="versao">Versão 1.0.0.1 · Novembro de 2026<br>financasmei.app.br</div>
+  <div class="versao">Versão 1.1.0 · Novembro de 2026<br>financasmei.app.br</div>
 </section>
 
 <h2 style="margin-top:0">Sumário</h2>
@@ -68,7 +68,7 @@
 <p>Abra <strong>https://financasmei.app.br</strong>. Em telas largas (computador) o menu fica à esquerda; em telas menores as abas ficam na parte de baixo.</p>
 <h3>No aplicativo Android</h3>
 <ol>
-  <li>No celular, abra o endereço <strong>https://financasmei.app.br/downloads/GestorFinanceiro-debug.apk</strong>.</li>
+  <li>No celular, abra o endereço <strong>https://financasmei.app.br/downloads/FinancasMEI.apk</strong>.</li>
   <li>Abra o arquivo baixado. Se o Android pedir, permita a instalação de aplicativos de fontes desconhecidas.</li>
   <li>Toque em <em>Instalar</em> e abra o app <strong>Finanças MEI</strong>.</li>
 </ol>
@@ -89,8 +89,10 @@
 <ol>
   <li>Na tela de login, toque em <em>Esqueci minha senha</em> e informe seu e-mail.</li>
   <li>Você receberá um <strong>código</strong> por e-mail. Confira também a caixa de spam.</li>
-  <li>Digite o código e escolha uma nova senha.</li>
+  <li>Digite o <strong>código de 6 dígitos</strong> e toque em <em>Verificar código</em>.</li>
+  <li>Só depois que o código for aceito aparecem os campos para criar a <strong>nova senha</strong>. Se o código estiver errado ou vencido, nada é alterado e você pode corrigir ou pedir outro.</li>
 </ol>
+<div class="dica">O e-mail com o código tem o mesmo visual do aplicativo. O código vale por 15 minutos.</div>
 <div class="aviso">Por segurança, há um limite de tentativas de login e de código. Se errar várias vezes, aguarde alguns minutos antes de tentar de novo.</div>
 
 <h2 class="nova">4. Dashboard</h2>
@@ -98,8 +100,9 @@
 <p>É a tela inicial. De cima para baixo:</p>
 <table>
   <tr><th style="width:30%">Item</th><th>O que mostra</th></tr>
-  <tr><td>Geral / PF / PJ</td><td>Filtra tudo pelo tipo de pessoa.</td></tr>
+  <tr><td>Geral / PF / PJ</td><td>Filtra tudo pelo tipo de pessoa. Só aparece se o seu perfil for <em>Ambos</em>; quem usa apenas PF ou apenas PJ vê direto os seus dados.</td></tr>
   <tr><td>Este mês / Anterior / Tudo</td><td>Período do resumo.</td></tr>
+  <tr><td>Personalizado</td><td>Escolha <em>Dia</em> para ver um dia específico, ou <em>Período</em> para informar uma data inicial e uma final. O saldo, as receitas, as despesas e as últimas transações passam a considerar só esse intervalo.</td></tr>
   <tr><td>Saldo</td><td>Receitas menos despesas do período, já considerando lançamentos sem conta. Mostra só o que já aconteceu até hoje.</td></tr>
   <tr><td>Receitas e Despesas</td><td>Totais do período. O cartão que supera o outro ganha destaque.</td></tr>
   <tr><td>Receitas vs Despesas</td><td>Barras com a proporção de cada um.</td></tr>
@@ -113,14 +116,15 @@
 
 <h2 class="nova">5. Transações</h2>
 <figure><img src="img/web-1440-transacoes-form.png" alt=""><figcaption>Formulário Nova Transação</figcaption></figure>
-<p>Na aba <strong>Transações</strong> estão todos os lançamentos. Use as abas <em>Todas / PF / PJ</em> para filtrar.</p>
+<p>Na aba <strong>Transações</strong> estão todos os lançamentos. Se o seu perfil for <em>Ambos</em>, use as abas <em>Todas / PF / PJ</em> para filtrar.</p>
 <h3>Registrar uma transação</h3>
 <ol>
   <li>Toque no botão <strong>+</strong>.</li>
-  <li>Preencha <strong>Descrição</strong>, <strong>Valor</strong>, <strong>Data</strong>, <strong>Tipo</strong> (Receita ou Despesa) e <strong>Pessoa</strong> (Física ou Jurídica).</li>
-  <li>Escolha a <strong>Categoria</strong> e a <strong>Conta</strong>. Se ainda não houver categorias, use o link <em>Criar categorias</em>.</li>
+  <li>Preencha <strong>Descrição</strong>, <strong>Valor</strong>, <strong>Data</strong> e <strong>Tipo</strong> (Receita ou Despesa). Quem tem perfil <em>Ambos</em> também escolhe a <strong>Pessoa</strong> (Física ou Jurídica).</li>
+  <li>Escolha a <strong>Categoria</strong> e a <strong>Conta</strong>. Se a categoria que você quer ainda não existe, toque em <em>+ Nova</em> ao lado do campo: informe o nome e ela já fica selecionada, sem perder o que você digitou.</li>
   <li>Toque em <strong>Salvar</strong>.</li>
 </ol>
+<div class="dica">Os campos de valor (em reais) têm máscara: digite só os números e o app monta o valor. Por exemplo, digitar <em>150000</em> resulta em <strong>R$ 1.500,00</strong>.</div>
 <h3>Transação parcelada</h3>
 <ol>
   <li>Ative a chave <strong>Parcelado</strong>.</li>
@@ -139,10 +143,10 @@
   <tr><td>Instituição financeira</td><td>Banco ou carteira digital.</td></tr>
   <tr><td>Número da conta</td><td>Opcional.</td></tr>
   <tr><td>Tipo *</td><td>Conta Corrente, Poupança ou Caixa.</td></tr>
-  <tr><td>Vínculo *</td><td>Se a conta é PF ou PJ. Cada tipo tem um ícone diferente na lista.</td></tr>
+  <tr><td>Vínculo *</td><td>Se a conta é PF ou PJ. Cada tipo tem um ícone diferente na lista. O campo só aparece para quem tem perfil <em>Ambos</em>; nos demais casos a conta já fica vinculada ao seu perfil.</td></tr>
   <tr><td>Saldo inicial *</td><td>Quanto havia na conta quando você começou a usar o app. Ele é somado ao saldo atual.</td></tr>
 </table>
-<p>O saldo atual de cada conta é o saldo inicial mais as receitas e menos as despesas lançadas nela, até hoje. Use o filtro <em>Todas / PF / PJ</em> no topo da lista.</p>
+<p>O saldo atual de cada conta é o saldo inicial mais as receitas e menos as despesas lançadas nela, até hoje. Com perfil <em>Ambos</em>, use o filtro <em>Todas / PF / PJ</em> no topo da lista.</p>
 
 <h2>7. Sazonalidade e caixa necessário</h2>
 <p>Todo negócio tem épocas boas e ruins. Aqui você cadastra esses períodos e, se quiser, define quanto dinheiro precisa ter guardado antes deles começarem.</p>
@@ -151,7 +155,7 @@
   <li>Toque em <strong>+</strong> (ou <em>Adicionar primeiro período</em>).</li>
   <li>Informe o <strong>Nome</strong> (ex.: Baixa de janeiro), o <strong>Mês de início</strong>, o <strong>Mês de fim</strong> e o <strong>Nível de impacto</strong>.</li>
   <li>Opcional: preencha <strong>Descrição</strong>.</li>
-  <li>Em <strong>Reserva de caixa (opcional)</strong>: escolha a <strong>Data para ter o caixa</strong>, o <strong>Caixa necessário (R$)</strong> e a <strong>Conta para débito</strong>.</li>
+  <li>Em <strong>Reserva de caixa (opcional)</strong>: escolha a <strong>Data para ter o caixa</strong> (pode ser de qualquer ano futuro), o <strong>Caixa necessário (R$)</strong> e a <strong>Conta para débito</strong>.</li>
 </ol>
 <h3>Como o Dashboard usa isso</h3>
 <p>A partir da data escolhida e até o fim do período, o Dashboard mostra o cartão <strong>Caixa para sazonalidade</strong>, comparando o saldo da conta com o valor necessário:</p>
@@ -162,12 +166,14 @@
 
 <h2 class="nova">8. Investimentos</h2>
 <p>Um caderno de ideias para o dinheiro que sobra. Cada ideia tem: <strong>Título *</strong>, <strong>Descrição</strong>, <strong>Valor estimado (R$)</strong>, <strong>Retorno estimado (%)</strong>, <strong>Prioridade *</strong> e <strong>Status *</strong>. A prioridade pode ser Alta, Média ou Baixa; o status acompanha a ideia: Ideia, Em Análise, Aprovado ou Descartado.</p>
+<h3>Levar um investimento aprovado para as transações</h3>
+<p>Na aba <em>Aprovados</em>, cada ideia tem o botão <strong>Lançar em transações</strong>. Ele abre uma nova transação (do tipo <em>Despesa</em>) já com a descrição e o valor da ideia preenchidos; é só conferir a data, a categoria e a conta e salvar.</p>
 <div class="aviso">Os valores de retorno são estimativas suas. O app não faz recomendação de investimentos.</div>
 
 <h2>9. Perfil, segurança e aparência</h2>
 <table>
   <tr><th style="width:30%">Opção</th><th>O que faz</th></tr>
-  <tr><td>Editar Perfil</td><td>Altera seus dados cadastrais.</td></tr>
+  <tr><td>Editar Perfil</td><td>Altera seus dados cadastrais. O <strong>tipo de perfil</strong> (PF, PJ ou Ambos) define o que o app mostra: quem é só PF ou só PJ não vê as abas e campos de vínculo.</td></tr>
   <tr><td>Categorias</td><td>Cria e organiza as categorias de receitas e despesas.</td></tr>
   <tr><td>Interface inicial</td><td>Escolhe o que aparece primeiro: PF, PJ ou Ambos.</td></tr>
   <tr><td>Entrar com biometria</td><td>No aplicativo, ativa o desbloqueio por digital ou rosto nos próximos acessos. Se o aparelho não tiver biometria cadastrada, a opção não funciona.</td></tr>
@@ -182,7 +188,7 @@
 <h3>O código de recuperação de senha não chegou.</h3>
 <p>Verifique o spam e se digitou o e-mail correto. Aguarde alguns minutos antes de pedir outro.</p>
 <h3>O teclado cobre o campo que estou preenchendo.</h3>
-<p>Role a tela um pouco; o app ajusta a posição ao abrir o teclado.</p>
+<p>Nos formulários, a barra de abas some enquanto o painel está aberto, para o teclado não cobrir os campos nem o botão <em>Salvar</em>. Ela volta ao fechar o formulário.</p>
 <h3>Posso usar no celular e no computador ao mesmo tempo?</h3>
 <p>Sim. Os dados ficam na sua conta e aparecem nos dois.</p>
 <h3>O aplicativo não instala.</h3>
@@ -190,6 +196,6 @@
 <h3>Meus dados estão seguros?</h3>
 <p>A conexão é protegida por HTTPS e a sua senha é guardada de forma criptografada. Veja os Termos de Uso dentro do app para detalhes.</p>
 
-<p style="margin-top:30px;color:#52606d;font-size:9.5pt">Finanças MEI · versão 1.0.0.1 · financasmei.app.br</p>
+<p style="margin-top:30px;color:#52606d;font-size:9.5pt">Finanças MEI · versão 1.1.0 · financasmei.app.br</p>
 </body>
 </html>

@@ -206,3 +206,19 @@ ion-card-title ion-icon {
     }
   }
 }
+
+.filtro-personalizado {
+  margin-top: var(--app-space-2);
+
+  .datas {
+    display: flex;
+    gap: var(--app-space-2);
+    margin-top: var(--app-space-2);
+
+    ion-item {
+      flex: 1;
+      --padding-start: 12px;
+      border-radius: var(--app-radius-md, 8px);
+    }
+  }
+}

@@ -7,5 +7,5 @@ import { Component } from '@angular/core';
 })
 export class TermosPage {
   /** Versão vigente — deve espelhar AuthResource.TERMOS_VERSAO no backend. */
-  readonly versao = '1.0 (2026-08-24)';
+  readonly versao = '1.1 (2026-11-10)';
 }

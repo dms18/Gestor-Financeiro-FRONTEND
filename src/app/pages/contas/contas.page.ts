@@ -5,6 +5,7 @@ import { ContaService } from '../../services/conta.service';
 import { TransacaoService } from '../../services/transacao.service';
 import { ResumoPorConta } from '../../models/transacao';
 import { Conta } from '../../models/conta';
+import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'app-contas',
@@ -28,7 +29,8 @@ export class ContasPage {
     private transacaoService: TransacaoService,
     private alertController: AlertController,
     private loadingController: LoadingController,
-    private toastController: ToastController
+    private toastController: ToastController,
+    private authService: AuthService
   ) {
     this.contaForm = this.fb.group({
       nome: ['', [Validators.required]],
@@ -40,7 +42,13 @@ export class ContasPage {
     });
   }
 
+  /** Abas PF/PJ e o campo "Vínculo" só fazem sentido para quem tem perfil AMBOS. */
+  get mostrarAbasVinculo(): boolean {
+    return this.authService.perfilAmbos;
+  }
+
   ionViewWillEnter() {
+    if (!this.authService.perfilAmbos) { this.filtroTipoPessoa = ''; }
     this.carregarContas();
   }
 
@@ -100,8 +108,8 @@ export class ContasPage {
       instituicao: '',
       numeroConta: '',
       tipo: 'CORRENTE',
-      saldo: null, // vazio: o placeholder "0,00" aparece e não há "0" para apagar
-      tipoPessoa: 'PF'
+      saldo: null, // vazio: aparece o placeholder e não há "0" para apagar
+      tipoPessoa: this.authService.vinculoPadrao
     });
     this.contaForm.markAsPristine();
     this.contaForm.markAsUntouched();

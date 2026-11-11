@@ -54,6 +54,10 @@
       </div>
 
       <div class="acoes">
+        <ion-button *ngIf="inv.status === 'APROVADO'" fill="solid" color="primary" size="small" (click)="lancarEmTransacoes(inv)">
+          <ion-icon slot="start" name="swap-vertical" aria-hidden="true"></ion-icon>
+          Lançar em transações
+        </ion-button>
         <ion-button fill="clear" (click)="abrirModalEditar(inv)">
           <ion-icon slot="start" name="create-outline" aria-hidden="true"></ion-icon>
           Editar
@@ -95,10 +99,7 @@
               <ion-textarea formControlName="descricao" rows="3" placeholder="Detalhes do investimento"></ion-textarea>
             </ion-item>
 
-            <ion-item>
-              <ion-label position="stacked">Valor estimado (R$)</ion-label>
-              <ion-input type="number" formControlName="valorEstimado" placeholder="0,00"></ion-input>
-            </ion-item>
+            <app-input-moeda rotulo="Valor estimado" formControlName="valorEstimado"></app-input-moeda>
 
             <ion-item>
               <ion-label position="stacked">Retorno estimado (%)</ion-label>

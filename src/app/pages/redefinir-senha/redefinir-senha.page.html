@@ -12,23 +12,26 @@
     <div class="intro">
       <ion-icon name="key-outline" color="primary" aria-hidden="true"></ion-icon>
       <h1>Digite o código</h1>
-      <p>Informe o código de 6 dígitos enviado ao seu e-mail e escolha uma nova senha.</p>
+      <p *ngIf="!codigoVerificado">Informe o código de 6 dígitos enviado ao seu e-mail.</p>
+      <p *ngIf="codigoVerificado">Código confirmado! Agora escolha uma nova senha.</p>
     </div>
 
     <form [formGroup]="form" (ngSubmit)="redefinir()" novalidate>
       <ion-item>
         <ion-label position="stacked">E-mail</ion-label>
-        <ion-input type="email" formControlName="email" inputmode="email" autocomplete="username"></ion-input>
+        <ion-input type="email" formControlName="email" inputmode="email" autocomplete="username"
+          [readonly]="codigoVerificado"></ion-input>
       </ion-item>
       <app-campo-erro [control]="form.get('email')"></app-campo-erro>
 
       <ion-item>
         <ion-label position="stacked">Código</ion-label>
         <ion-input type="text" formControlName="codigo" inputmode="numeric" maxlength="6"
-          autocomplete="one-time-code" placeholder="000000"></ion-input>
+          autocomplete="one-time-code" placeholder="000000" [readonly]="codigoVerificado"></ion-input>
       </ion-item>
       <app-campo-erro [control]="form.get('codigo')"></app-campo-erro>
 
+      <ng-container *ngIf="codigoVerificado">
       <ion-item>
         <ion-label position="stacked">Nova senha</ion-label>
         <ion-input [type]="mostrarSenha ? 'text' : 'password'" formControlName="novaSenha" autocomplete="new-password"></ion-input>
@@ -47,16 +50,20 @@
         *ngIf="form.hasError('senhasNaoIguais') && form.get('confirmacaoSenha')?.touched">
         As senhas não conferem
       </div>
+      </ng-container>
 
       <ion-button expand="block" color="primary" type="submit" class="btn-principal" [disabled]="loading">
         <ion-spinner *ngIf="loading" name="dots" aria-hidden="true"></ion-spinner>
-        <span aria-live="polite">{{ loading ? 'Salvando...' : 'Redefinir senha' }}</span>
+        <span aria-live="polite">{{ loading ? 'Aguarde...' : (codigoVerificado ? 'Redefinir senha' : 'Verificar código') }}</span>
       </ion-button>
     </form>
 
-    <div class="voltar-link">
+    <div class="voltar-link" *ngIf="!codigoVerificado">
       <p>Não recebeu o código?</p>
       <ion-button fill="clear" color="primary" (click)="reenviar()" [disabled]="loading">Reenviar código</ion-button>
+    </div>
+    <div class="voltar-link" *ngIf="codigoVerificado">
+      <ion-button fill="clear" color="primary" (click)="alterarCodigo()">Alterar código</ion-button>
     </div>
   </div>
 </ion-content>

@@ -123,7 +123,7 @@
 
             <ion-item>
               <ion-label position="stacked">Data para ter o caixa</ion-label>
-              <ion-datetime formControlName="dataAlvo" displayFormat="DD/MM/YYYY" placeholder="Selecione a data"
+              <ion-datetime formControlName="dataAlvo" displayFormat="DD/MM/YYYY" max="2100" placeholder="Selecione a data"
                 cancelText="Cancelar" doneText="OK"
                 monthNames="janeiro,fevereiro,março,abril,maio,junho,julho,agosto,setembro,outubro,novembro,dezembro"
                 monthShortNames="jan,fev,mar,abr,mai,jun,jul,ago,set,out,nov,dez"
@@ -131,10 +131,7 @@
                 dayShortNames="dom,seg,ter,qua,qui,sex,sáb"></ion-datetime>
             </ion-item>
 
-            <ion-item>
-              <ion-label position="stacked">Caixa necessário (R$)</ion-label>
-              <ion-input type="number" inputmode="decimal" formControlName="valorNecessario" placeholder="0,00"></ion-input>
-            </ion-item>
+            <app-input-moeda rotulo="Caixa necessário" formControlName="valorNecessario"></app-input-moeda>
             <app-campo-erro [control]="sazonalidadeForm.get('valorNecessario')"></app-campo-erro>
 
             <ion-item>

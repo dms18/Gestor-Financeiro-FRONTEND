@@ -503,3 +503,9 @@ body.dark {
     grid-column: 1 / -1;
   }
 }
+
+/* Com um formulário em painel aberto, a barra de abas some: o painel usa toda a área útil
+   e o teclado virtual não deixa campos nem o botão Salvar escondidos atrás dela. */
+body.form-aberto:not(.plataforma-web) ion-tab-bar {
+  display: none;
+}
