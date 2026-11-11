@@ -85,6 +85,16 @@ export class AuthService {
     return this.usuario$;
   }
 
+  /** Usuário guardado localmente (síncrono). */
+  getUsuarioLocal(): Usuario | null {
+    return this.usuarioSubject.value;
+  }
+
+  /** Administrador (flag ic_adm). Só libera a interface; o servidor confere a permissão de novo. */
+  get isAdmin(): boolean {
+    return this.usuarioSubject.value?.admin === true;
+  }
+
   /**
    * O perfil do usuário define se o app mostra PF, PJ ou os dois (abas e campos de vínculo).
    * Sem perfil conhecido, mostra os dois (comportamento anterior).

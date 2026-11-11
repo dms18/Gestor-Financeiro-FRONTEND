@@ -8,6 +8,8 @@ export interface Usuario {
   ativo: boolean;
   fotoPerfil?: string | null;
   interfaceInicial?: string | null;
+  /** Administrador (flag ic_adm no banco). O painel /admin só aparece na versão web. */
+  admin?: boolean;
 }
 
 export interface LoginRequest {

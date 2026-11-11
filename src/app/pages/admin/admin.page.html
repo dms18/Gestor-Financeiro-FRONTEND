@@ -1,0 +1,209 @@
+<ion-header [translucent]="true">
+  <ion-toolbar color="primary">
+    <ion-title>Painel do administrador</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="aba === 'geral' ? carregar() : carregarInfra()" [disabled]="carregando || carregandoInfra" aria-label="Atualizar dados">
+        <ion-icon slot="icon-only" name="refresh" aria-hidden="true"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+  <ion-toolbar color="primary">
+    <ion-segment [(ngModel)]="aba" (ionChange)="mudarAba()" aria-label="Seção do painel">
+      <ion-segment-button value="geral"><ion-label>Visão geral</ion-label></ion-segment-button>
+      <ion-segment-button value="servidor"><ion-label>Servidor</ion-label></ion-segment-button>
+    </ion-segment>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  <ion-refresher slot="fixed" (ionRefresh)="carregar($event)">
+    <ion-refresher-content></ion-refresher-content>
+  </ion-refresher>
+
+  <div class="admin" *ngIf="aba === 'geral' && resumo as r">
+    <p class="atualizado">Atualizado em {{ r.geradoEm | date:'dd/MM/yyyy HH:mm' }}</p>
+
+    <h2>Usuários</h2>
+    <div class="kpis">
+      <ion-card class="kpi"><ion-card-content>
+        <span class="rotulo">Total de usuários</span><span class="valor">{{ r.usuarios.total }}</span>
+      </ion-card-content></ion-card>
+      <ion-card class="kpi"><ion-card-content>
+        <span class="rotulo">Ativos</span><span class="valor">{{ r.usuarios.ativos }}</span>
+        <span class="sub">{{ r.usuarios.inativos }} inativos</span>
+      </ion-card-content></ion-card>
+      <ion-card class="kpi"><ion-card-content>
+        <span class="rotulo">Novos (7 dias)</span><span class="valor">{{ r.usuarios.novos7Dias }}</span>
+        <span class="sub">{{ r.usuarios.novos30Dias }} em 30 dias</span>
+      </ion-card-content></ion-card>
+      <ion-card class="kpi"><ion-card-content>
+        <span class="rotulo">Usaram nos últimos 30 dias</span><span class="valor">{{ r.atividade.usuariosAtivos30Dias }}</span>
+        <span class="sub">{{ percentual(r.atividade.usuariosAtivos30Dias, r.usuarios.total) }}% da base</span>
+      </ion-card-content></ion-card>
+    </div>
+
+    <div class="duas-colunas">
+      <ion-card>
+        <ion-card-header><ion-card-title>Cadastros por dia (30 dias)</ion-card-title></ion-card-header>
+        <ion-card-content>
+          <div class="grafico" role="img"
+               [attr.aria-label]="'Cadastros por dia nos últimos 30 dias: ' + r.usuarios.novos30Dias + ' no total'">
+            <div class="coluna" *ngFor="let d of r.cadastrosPorDia"
+                 [title]="diaMes(d.data) + ': ' + d.quantidade">
+              <div class="barra" [style.height.%]="alturaBarra(d.quantidade)"></div>
+            </div>
+          </div>
+          <div class="eixo"><span>{{ diaMes(r.cadastrosPorDia[0].data) }}</span><span>{{ diaMes(r.cadastrosPorDia[r.cadastrosPorDia.length - 1].data) }}</span></div>
+        </ion-card-content>
+      </ion-card>
+
+      <ion-card>
+        <ion-card-header><ion-card-title>Perfil dos usuários</ion-card-title></ion-card-header>
+        <ion-card-content>
+          <div class="linha-prop" *ngFor="let p of perfis">
+            <span>{{ rotuloPerfil[p.chave] || p.chave }}</span>
+            <div class="trilho"><div class="preenche" [style.width.%]="percentual(p.qtd, r.usuarios.total)"></div></div>
+            <strong>{{ p.qtd }}</strong>
+          </div>
+          <p class="nota">{{ r.usuarios.aceitaramTermos }} de {{ r.usuarios.total }} aceitaram os termos.</p>
+        </ion-card-content>
+      </ion-card>
+    </div>
+
+    <h2>Uso do sistema</h2>
+    <div class="kpis">
+      <ion-card class="kpi"><ion-card-content>
+        <span class="rotulo">Transações</span><span class="valor">{{ r.atividade.transacoes }}</span>
+        <span class="sub">{{ r.atividade.transacoes30Dias }} nos últimos 30 dias</span>
+      </ion-card-content></ion-card>
+      <ion-card class="kpi"><ion-card-content>
+        <span class="rotulo">Contas</span><span class="valor">{{ r.atividade.contas }}</span>
+      </ion-card-content></ion-card>
+      <ion-card class="kpi"><ion-card-content>
+        <span class="rotulo">Categorias</span><span class="valor">{{ r.atividade.categorias }}</span>
+      </ion-card-content></ion-card>
+      <ion-card class="kpi"><ion-card-content>
+        <span class="rotulo">Períodos sazonais</span><span class="valor">{{ r.atividade.sazonalidades }}</span>
+      </ion-card-content></ion-card>
+      <ion-card class="kpi"><ion-card-content>
+        <span class="rotulo">Investimentos</span><span class="valor">{{ r.atividade.investimentos }}</span>
+        <span class="sub">
+          <ng-container *ngFor="let s of statusInvestimentos; let ultimo = last">
+            {{ s.qtd }} {{ (rotuloStatus[s.chave] || s.chave) | lowercase }}{{ ultimo ? '' : ' · ' }}
+          </ng-container>
+        </span>
+      </ion-card-content></ion-card>
+    </div>
+
+    <h2>Últimos cadastros</h2>
+    <ion-card>
+      <div class="tabela-rolagem">
+        <table class="tabela">
+          <thead>
+            <tr><th>Nome</th><th>E-mail</th><th>Perfil</th><th>Cadastro</th><th class="num">Lançamentos</th><th>Situação</th></tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let u of r.usuariosRecentes">
+              <td>{{ u.nome }} <ion-badge *ngIf="u.admin" color="tertiary">admin</ion-badge></td>
+              <td>{{ u.email }}</td>
+              <td>{{ rotuloPerfil[u.perfil] || u.perfil }}</td>
+              <td>{{ u.criadoEm | date:'dd/MM/yyyy HH:mm' }}</td>
+              <td class="num">{{ u.transacoes }}</td>
+              <td><ion-badge [color]="u.ativo ? 'success' : 'medium'">{{ u.ativo ? 'Ativo' : 'Inativo' }}</ion-badge></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </ion-card>
+
+    <p class="nota privacidade">
+      <ion-icon name="shield-checkmark-outline" aria-hidden="true"></ion-icon>
+      Este painel mostra apenas números agregados e dados cadastrais. Saldos, valores e lançamentos dos usuários não são exibidos.
+    </p>
+  </div>
+
+  <div class="ion-padding ion-text-center" *ngIf="aba === 'geral' && carregando && !resumo" aria-busy="true">
+    <ion-spinner name="dots"></ion-spinner>
+  </div>
+
+  <div class="ion-padding ion-text-center erro" *ngIf="aba === 'geral' && erro" role="alert">
+    <ion-icon name="alert-circle-outline" aria-hidden="true"></ion-icon>
+    <p>{{ erro }}</p>
+    <ion-button fill="clear" (click)="carregar()">Tentar de novo</ion-button>
+  </div>
+
+  <!-- ===== Servidor e containers ===== -->
+  <div class="admin" *ngIf="aba === 'servidor' && infra as i">
+    <p class="atualizado">Atualiza sozinho a cada 10 s · medido às {{ i.geradoEm | date:'HH:mm:ss' }}</p>
+
+    <h2>Servidor (VPS)</h2>
+    <div class="kpis">
+      <ion-card class="kpi"><ion-card-content>
+        <span class="rotulo">CPU</span>
+        <span class="valor">{{ i.vps.cpuPercentual != null ? (i.vps.cpuPercentual | number:'1.0-1') + '%' : '—' }}</span>
+        <div class="trilho"><div class="preenche" [ngClass]="corBarra(i.vps.cpuPercentual)" [style.width.%]="i.vps.cpuPercentual || 0"></div></div>
+        <span class="sub">{{ i.vps.cpus || '—' }} núcleos · carga {{ i.vps.load1 != null ? (i.vps.load1 | number:'1.2-2') : '—' }} / {{ i.vps.load5 != null ? (i.vps.load5 | number:'1.2-2') : '—' }} / {{ i.vps.load15 != null ? (i.vps.load15 | number:'1.2-2') : '—' }}</span>
+      </ion-card-content></ion-card>
+      <ion-card class="kpi"><ion-card-content>
+        <span class="rotulo">Memória</span>
+        <span class="valor">{{ pct(i.vps.memoriaUsadaBytes, i.vps.memoriaTotalBytes) }}%</span>
+        <div class="trilho"><div class="preenche" [ngClass]="corBarra(pct(i.vps.memoriaUsadaBytes, i.vps.memoriaTotalBytes))" [style.width.%]="pct(i.vps.memoriaUsadaBytes, i.vps.memoriaTotalBytes)"></div></div>
+        <span class="sub">{{ bytes(i.vps.memoriaUsadaBytes) }} de {{ bytes(i.vps.memoriaTotalBytes) }}
+          <ng-container *ngIf="i.vps.swapTotalBytes"> · swap {{ bytes(i.vps.swapUsadaBytes) }}/{{ bytes(i.vps.swapTotalBytes) }}</ng-container></span>
+      </ion-card-content></ion-card>
+      <ion-card class="kpi"><ion-card-content>
+        <span class="rotulo">Disco</span>
+        <span class="valor">{{ pct(i.vps.discoUsadoBytes, i.vps.discoTotalBytes) }}%</span>
+        <div class="trilho"><div class="preenche" [ngClass]="corBarra(pct(i.vps.discoUsadoBytes, i.vps.discoTotalBytes))" [style.width.%]="pct(i.vps.discoUsadoBytes, i.vps.discoTotalBytes)"></div></div>
+        <span class="sub">{{ bytes(i.vps.discoUsadoBytes) }} de {{ bytes(i.vps.discoTotalBytes) }}</span>
+      </ion-card-content></ion-card>
+      <ion-card class="kpi"><ion-card-content>
+        <span class="rotulo">Ligado há</span>
+        <span class="valor">{{ duracao(i.vps.uptimeSegundos) }}</span>
+      </ion-card-content></ion-card>
+    </div>
+
+    <h2>Containers</h2>
+    <p class="nota aviso-docker" *ngIf="!i.containersDisponiveis" role="note">
+      <ion-icon name="information-circle-outline" aria-hidden="true"></ion-icon>
+      {{ i.containersErro || 'Dados dos containers indisponíveis.' }}
+    </p>
+    <ion-card *ngIf="i.containersDisponiveis">
+      <div class="tabela-rolagem">
+        <table class="tabela">
+          <thead>
+            <tr><th>Container</th><th>Situação</th><th class="num">CPU</th><th>Memória</th><th class="num">Rede ↓ / ↑</th><th class="num">Disco leitura / escrita</th></tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let c of i.containers">
+              <td><strong>{{ c.nome }}</strong><br><span class="sub">{{ c.imagem }}</span></td>
+              <td><ion-badge [color]="c.estado === 'running' ? 'success' : 'danger'">{{ c.estado }}</ion-badge><br><span class="sub">{{ c.situacao }}</span></td>
+              <td class="num">{{ c.cpuPercentual != null ? (c.cpuPercentual | number:'1.0-1') + '%' : '—' }}</td>
+              <td class="celula-mem">
+                {{ bytes(c.memoriaUsadaBytes) }}<ng-container *ngIf="limiteMemoria(c) as lim"> / {{ bytes(lim) }}</ng-container>
+                <div class="trilho pequeno" *ngIf="limiteMemoria(c) as lim"><div class="preenche" [ngClass]="corBarra(pct(c.memoriaUsadaBytes, lim))" [style.width.%]="pct(c.memoriaUsadaBytes, lim)"></div></div>
+              </td>
+              <td class="num">{{ bytes(c.redeRxBytes) }} / {{ bytes(c.redeTxBytes) }}</td>
+              <td class="num">{{ bytes(c.discoLeituraBytes) }} / {{ bytes(c.discoEscritaBytes) }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </ion-card>
+
+    <p class="nota privacidade">
+      <ion-icon name="shield-checkmark-outline" aria-hidden="true"></ion-icon>
+      Rede e disco são totais acumulados desde que cada container iniciou. A memória não conta o cache de arquivos.
+    </p>
+  </div>
+
+  <div class="ion-padding ion-text-center" *ngIf="aba === 'servidor' && carregandoInfra && !infra" aria-busy="true">
+    <ion-spinner name="dots"></ion-spinner>
+  </div>
+
+  <div class="ion-padding ion-text-center erro" *ngIf="aba === 'servidor' && erroInfra" role="alert">
+    <ion-icon name="alert-circle-outline" aria-hidden="true"></ion-icon>
+    <p>{{ erroInfra }}</p>
+    <ion-button fill="clear" (click)="carregarInfra()">Tentar de novo</ion-button>
+  </div>
+</ion-content>

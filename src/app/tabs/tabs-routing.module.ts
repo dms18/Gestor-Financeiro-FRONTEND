@@ -1,6 +1,7 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { TabsPage } from './tabs.page';
+import { AdminGuard } from '../guards/admin.guard';
 
 const routes: Routes = [
   {
@@ -64,6 +65,17 @@ const routes: Routes = [
             path: '',
             loadChildren: () =>
               import('../pages/categorias/categorias.module').then(m => m.CategoriasPageModule)
+          }
+        ]
+      },
+      {
+        path: 'admin',
+        canActivate: [AdminGuard],
+        children: [
+          {
+            path: '',
+            loadChildren: () =>
+              import('../pages/admin/admin.module').then(m => m.AdminPageModule)
           }
         ]
       },
