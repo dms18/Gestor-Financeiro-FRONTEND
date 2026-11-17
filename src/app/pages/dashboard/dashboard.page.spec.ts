@@ -90,11 +90,47 @@ describe('DashboardPage', () => {
       page.periodo = 'mes';
       page.carregarDados();
       const hoje = new Date();
-      expect(transacaoService.obterResumo.calls.mostRecent().args.slice(1)).toEqual([hoje.getMonth() + 1, hoje.getFullYear()]);
+      expect(transacaoService.obterResumo.calls.mostRecent().args.slice(1, 3)).toEqual([hoje.getMonth() + 1, hoje.getFullYear()]);
 
       page.periodo = 'tudo';
       page.carregarDados();
-      expect(transacaoService.obterResumo.calls.mostRecent().args.slice(1)).toEqual([undefined, undefined]);
+      expect(transacaoService.obterResumo.calls.mostRecent().args.slice(1, 3)).toEqual([undefined, undefined]);
+    });
+
+    it('filtro personalizado em "dia" usa o mesmo dia como início e fim', () => {
+      page.periodo = 'personalizado';
+      page.modoPersonalizado = 'dia';
+      page.dataInicio = '2026-11-05T10:00:00.000-03:00';
+      page.carregarDados();
+      const [, mes, ano, inicio, fim] = transacaoService.obterResumo.calls.mostRecent().args;
+      expect([mes, ano]).toEqual([undefined, undefined]);
+      expect([inicio, fim]).toEqual(['2026-11-05', '2026-11-05']);
+    });
+
+    it('filtro personalizado em "periodo" envia início e fim, e o fim nunca fica antes do início', () => {
+      page.periodo = 'personalizado';
+      page.modoPersonalizado = 'periodo';
+      page.dataInicio = '2026-11-01';
+      page.dataFim = '2026-11-15';
+      page.carregarDados();
+      expect(transacaoService.obterResumo.calls.mostRecent().args.slice(3)).toEqual(['2026-11-01', '2026-11-15']);
+
+      page.dataFim = '2026-10-01'; // fim antes do início
+      page.carregarDados();
+      expect(transacaoService.obterResumo.calls.mostRecent().args.slice(3)).toEqual(['2026-11-01', '2026-11-01']);
+    });
+
+    it('filtro personalizado mostra só as transações do intervalo nas últimas transações', () => {
+      transacaoService.listar.and.returnValue(of([
+        { id: 1, descricao: 'dentro', data: '2026-11-05', valor: 1, tipo: 'RECEITA', tipoPessoa: 'PF' },
+        { id: 2, descricao: 'fora', data: '2026-11-20', valor: 1, tipo: 'RECEITA', tipoPessoa: 'PF' }
+      ]));
+      page.periodo = 'personalizado';
+      page.modoPersonalizado = 'periodo';
+      page.dataInicio = '2026-11-01';
+      page.dataFim = '2026-11-10';
+      page.carregarDados();
+      expect(page.ultimasTransacoes.map(t => t.descricao)).toEqual(['dentro']);
     });
 
     it('"anterior" pede o mês passado (inclusive em janeiro, virando o ano)', () => {
